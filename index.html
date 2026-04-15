@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness Club - Transform Your Body</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <img src="logo.jpg.png" alt="Fitness Club Logo"> 
+                <span>FITNESS CLUB</span>
+            </div>
+            <button class="menu-toggle" id="menuToggle">☰</button>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#trainers">Trainers</a></li>
+                <li><a href="#membership">Membership</a></li>
+                <li><a href="#bmi">BMI Calculator</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>TRANSFORM YOUR <span class="highlight">BODY</span></h1>
+            <p>Join the best fitness club and achieve your dream physique</p>
+            <a href="#membership" class="btn btn-primary">GET STARTED</a>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="section">
+        <div class="container">
+            <h2 class="section-title">OUR <span class="highlight">SERVICES</span></h2>
+            <div class="services-grid">
+                <div class="service-card">
+                   
+                      <img src="weigth.jpg" alt="Weight Training">
+                    <h3>Weight Training</h3>
+                    <p>Build muscle and strength with professional guidance</p>
+                </div>
+                <div class="service-card">
+                    <img src="cardio.jpg" alt="cardio">
+                    <h3>Cardio Training</h3>
+                    <p>Improve your cardiovascular health and endurance</p>
+                </div>
+                <div class="service-card">
+                   <img src="yoga.jpg" alt="yoga">
+                    <h3>Yoga & Flexibility</h3>
+                    <p>Enhance flexibility and find your inner peace</p>
+                </div>
+                <div class="service-card">
+                     <img src="boxing.jpg" alt="boxing">
+                    <h3>Boxing Classes</h3>
+                    <p>Learn self-defense while getting in shape</p>
+                </div>
+                <div class="service-card">
+                     <img src="personal.jpg" alt="personal Training">
+                    <h3>Personal Training</h3>
+                    <p>Get customized workout plans from expert trainers</p>
+                </div>
+                <div class="service-card">
+                     <img src="diet.jpg" alt="diet">
+                    <h3>Diet Planning</h3>
+                    <p>Nutrition guidance for optimal results</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trainers Section -->
+    <section id="trainers" class="section section-dark">
+        <div class="container">
+            <h2 class="section-title">EXPERT <span class="highlight">TRAINERS</span></h2>
+            <div class="trainers-grid">
+                <div class="trainer-card">
+                    <div class="trainer-img">
+                        <img src="t1.jpg">
+                    </div>
+                    <h3>John Smith</h3>
+                    <p class="specialty">Strength Coach</p>
+                    <p>10 years experience</p>
+                </div>
+                <div class="trainer-card">
+                    <div class="trainer-img"><img src="t2.jpg"></div>
+                    <h3>Sarah Johnson</h3>
+                    <p class="specialty">Yoga Instructor</p>
+                    <p>8 years experience</p>
+                </div>
+                <div class="trainer-card">
+                    <div class="trainer-img"><img src="t3.jpg"></div>
+                    <h3>Mike Davis</h3>
+                    <p class="specialty">Cardio Specialist</p>
+                    <p>12 years experience</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Membership Section -->
+    <section id="membership" class="section">
+        <div class="container">
+            <h2 class="section-title">MEMBERSHIP <span class="highlight">PLANS</span></h2>
+            <div class="pricing-grid">
+                <div class="price-card">
+                    <h3>BASIC</h3>
+                    <div class="price">$29<span>/month</span></div>
+                    <ul>
+                        <li>✓ Gym Access</li>
+                        <li>✓ Locker Room</li>
+                        <li>✓ Free Wifi</li>
+                        <li>✗ Personal Trainer</li>
+                        <li>✗ Group Classes</li>
+                    </ul>
+                    <button class="btn btn-outline" onclick="selectPlan('Basic', 29)">SELECT PLAN</button>
+                </div>
+                <div class="price-card featured">
+                    <div class="badge">POPULAR</div>
+                    <h3>PREMIUM</h3>
+                    <div class="price">$59<span>/month</span></div>
+                    <ul>
+                        <li>✓ Gym Access</li>
+                        <li>✓ Locker Room</li>
+                        <li>✓ Free Wifi</li>
+                        <li>✓ Personal Trainer (2/week)</li>
+                        <li>✓ Group Classes</li>
+                    </ul>
+                    <button class="btn btn-primary" onclick="selectPlan('Premium', 59)">SELECT PLAN</button>
+                </div>
+                <div class="price-card">
+                    <h3>VIP</h3>
+                    <div class="price">$99<span>/month</span></div>
+                    <ul>
+                        <li>✓ 24/7 Gym Access</li>
+                        <li>✓ Private Locker</li>
+                        <li>✓ Free Wifi</li>
+                        <li>✓ Unlimited Personal Training</li>
+                        <li>✓ All Group Classes</li>
+                        <li>✓ Diet Planning</li>
+                    </ul>
+                    <button class="btn btn-outline" onclick="selectPlan('VIP', 99)">SELECT PLAN</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BMI Calculator Section -->
+    <section id="bmi" class="section section-dark">
+        <div class="container">
+            <h2 class="section-title">BMI <span class="highlight">CALCULATOR</span></h2>
+            <div class="bmi-calculator">
+                <div class="bmi-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Height (cm)</label>
+                            <input type="number" id="height" placeholder="170">
+                        </div>
+                        <div class="form-group">
+                            <label>Weight (kg)</label>
+                            <input type="number" id="weight" placeholder="70">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="calculateBMI()">CALCULATE</button>
+                </div>
+                <div id="bmiResult" class="bmi-result" style="display: none;">
+                    <h3>Your BMI: <span id="bmiValue"></span></h3>
+                    <p id="bmiCategory"></p>
+                    <p id="bmiAdvice"></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact/Booking Section -->
+    <section id="contact" class="section">
+        <div class="container">
+            <h2 class="section-title">JOIN US <span class="highlight">TODAY</span></h2>
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <h3>Get in Touch</h3>
+                    <div class="info-item">
+                        <span class="icon">📍</span>
+                        <p>123 Fitness Street, Gym City, GC 12345</p>
+                    </div>
+                    <div class="info-item">
+                        <span class="icon">📞</span>
+                        <p>+1 (555) 123-4567</p>
+                    </div>
+                    <div class="info-item">
+                        <span class="icon">📧</span>
+                        <p>info@fitnessclub.com</p>
+                    </div>
+                    <div class="info-item">
+                        <span class="icon">⏰</span>
+                        <p>Mon-Sat: 6AM - 10PM<br>Sunday: 8AM - 6PM</p>
+                    </div>
+                </div>
+                <div class="contact-form">
+                    <h3>Book Your Free Trial</h3>
+                    <form id="bookingForm">
+                        <div class="form-group">
+                            <input type="text" id="name" placeholder="Your Name" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" id="email" placeholder="Your Email" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="tel" id="phone" placeholder="Your Phone" required>
+                        </div>
+                        <div class="form-group">
+                            <select id="service" required>
+                                <option value="">Select Service</option>
+                                <option value="weight-training">Weight Training</option>
+                                <option value="cardio">Cardio Training</option>
+                                <option value="yoga">Yoga</option>
+                                <option value="boxing">Boxing</option>
+                                <option value="personal">Personal Training</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <input type="date" id="date" required>
+                        </div>
+                        <div class="form-group">
+                            <textarea id="message" rows="3" placeholder="Additional Message"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">BOOK NOW</button>
+                    </form>
+                    <div id="formMessage" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal for Membership Selection -->
+    <div id="membershipModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Complete Your Registration</h2>
+            <form id="membershipForm">
+                <p><strong>Selected Plan:</strong> <span id="selectedPlan"></span></p>
+                <p><strong>Price:</strong> $<span id="selectedPrice"></span>/month</p>
+                <div class="form-group">
+                    <input type="text" id="memberName" placeholder="Full Name" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" id="memberEmail" placeholder="Email" required>
+                </div>
+                <div class="form-group">
+                    <input type="tel" id="memberPhone" placeholder="Phone" required>
+                </div>
+                <div class="form-group">
+                    <input type="date" id="startDate" placeholder="Start Date" required>
+                </div>
+                <button type="submit" class="btn btn-primary">SUBMIT</button>
+            </form>
+            <div id="membershipMessage" style="display: none;"></div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>💪 FITNESS CLUB</h4>
+                    <p>Transform your body and mind with our expert trainers and world-class facilities.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#services">Services</a></li>
+                        <li><a href="#trainers">Trainers</a></li>
+                        <li><a href="#membership">Membership</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <p>123 Fitness Street<br>Gym City, GC 12345<br>Phone: +1 (555) 123-4567</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Fitness Club. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>    
