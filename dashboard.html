@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+
+<h1>Admin Dashboard</h1>
+<button onclick="logout()">Logout</button>
+
+<h2>Bookings</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Service</th>
+            <th>Date</th>
+        </tr>
+    </thead>
+    <tbody id="bookingTable"></tbody>
+</table>
+
+<h2>Memberships</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Plan</th>
+            <th>Start Date</th>
+        </tr>
+    </thead>
+    <tbody id="membershipTable"></tbody>
+</table>
+
+<script src="dashboard.js"></script>
+</body>
+</html>

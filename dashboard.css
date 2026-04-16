@@ -1,0 +1,65 @@
+body {
+    margin: 0;
+    font-family: 'Oswald', sans-serif;
+    background: #020617;
+    color: #e2e8f0;
+    padding: 20px;
+}
+
+/* Heading */
+h1 {
+    text-align: center;
+    color: #38bdf8;
+}
+
+/* Section titles */
+h2 {
+    margin-top: 40px;
+    color: #38bdf8;
+}
+
+/* Logout button */
+button {
+    padding: 8px 15px;
+    background: transparent;
+    border: 2px solid #0ea5e9;
+    color: #38bdf8;
+    cursor: pointer;
+    float: right;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: #0ea5e9;
+    color: #020617;
+}
+
+/* Table */
+table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+    border: 1px solid #0ea5e9;
+}
+
+/* Table cells */
+th, td {
+    padding: 12px;
+    text-align: center;
+}
+
+/* Header */
+th {
+    color: #38bdf8;
+    border-bottom: 1px solid #0ea5e9;
+}
+
+/* Rows */
+tr {
+    border-bottom: 1px solid rgba(14,165,233,0.2);
+}
+
+/* Hover row */
+tr:hover {
+    background: rgba(14,165,233,0.1);
+}
