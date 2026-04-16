@@ -1,38 +1,66 @@
+
 let members = [];
+let chart;
+
+// LOGIN
+function login(){
+  const email = document.getElementById("email").value;
+  const pass = document.getElementById("password").value;
+
+  if(email && pass){
+    localStorage.setItem("token","admin");
+    showDashboard();
+  }
 }
 
+// LOGOUT
 function logout(){
-  localStorage.removeItem('token');
+  localStorage.removeItem("token");
   location.reload();
 }
 
-function showSection(id){
-  document.getElementById('home').style.display='none';
-  document.getElementById('members').style.display='none';
-  document.getElementById(id).style.display='block';
+// SHOW DASHBOARD
+function showDashboard(){
+  document.getElementById("loginPage").style.display="none";
+  document.getElementById("dashboard").style.display="flex";
+  initChart();
+  render();
 }
 
+// SECTION SWITCH
+function showSection(id){
+  document.getElementById("home").style.display="none";
+  document.getElementById("members").style.display="none";
+  document.getElementById(id).style.display="block";
+}
+
+// ADD MEMBER
 function addMember(){
-  const name = document.getElementById('name').value;
-  const fee = Number(document.getElementById('fee').value);
+  const name = document.getElementById("name").value;
+  const fee = Number(document.getElementById("fee").value);
+
+  if(!name || !fee) return;
 
   members.push({name, fee, paid:false});
   render();
 }
 
-function markPaid(index){
-  members[index].paid = true;
+// MARK PAID
+function markPaid(i){
+  members[i].paid = true;
   render();
 }
 
-function deleteMember(index){
-  members.splice(index,1);
+// DELETE
+function deleteMember(i){
+  members.splice(i,1);
   render();
 }
 
+// RENDER TABLE + STATS
 function render(){
-  const table = document.getElementById('memberTable');
-  table.innerHTML='';
+  const table = document.getElementById("memberTable");
+  table.innerHTML = "";
 
   let revenue = 0;
 
@@ -43,46 +71,43 @@ function render(){
       <tr>
         <td>${m.name}</td>
         <td>₹${m.fee}</td>
-        <td>${m.paid ? 'Paid' : 'Pending'}</td>
+        <td>${m.paid ? "Paid" : "Pending"}</td>
         <td>
-          <button class='action paid' onclick='markPaid(${i})'>Paid</button>
-          <button class='action delete' onclick='deleteMember(${i})'>Delete</button>
+          <button class="action paid" onclick="markPaid(${i})">Paid</button>
+          <button class="action delete" onclick="deleteMember(${i})">Delete</button>
         </td>
       </tr>
     `;
   });
 
-  document.getElementById('totalMembers').innerText = members.length;
-  document.getElementById('revenue').innerText = '₹' + revenue;
+  document.getElementById("totalMembers").innerText = members.length;
+  document.getElementById("revenue").innerText = "₹" + revenue;
 
-  updateChart();
+  updateChart(revenue);
 }
 
+// CHART
 function initChart(){
-  const ctx = document.getElementById('chart');
-  chart = new Chart(ctx, {
-    type:'bar',
+  const ctx = document.getElementById("chart");
+
+  chart = new Chart(ctx,{
+    type:"bar",
     data:{
-      labels:['Revenue'],
+      labels:["Revenue"],
       datasets:[{
-        label:'Revenue',
+        label:"Revenue",
         data:[0]
       }]
     }
   });
 }
 
-function updateChart(){
-  if(chart){
-    chart.data.datasets[0].data = [
-      members.filter(m=>m.paid).reduce((a,b)=>a+b.fee,0)
-    ];
-    chart.update();
-  }
+function updateChart(revenue){
+  chart.data.datasets[0].data = [revenue];
+  chart.update();
 }
 
-if(localStorage.getItem('token')){
-  document.getElementById('loginPage').style.display='none';
-  document.getElementById('dashboard').style.display='flex';
-  initChart();
+// AUTO LOGIN CHECK
+if(localStorage.getItem("token")){
+  showDashboard();
 }
