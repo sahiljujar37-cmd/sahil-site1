@@ -1,44 +1,77 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    <link rel="stylesheet" href="dashboard.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gym Admin Dashboard</title>
+
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
-<h1>Admin Dashboard</h1>
-<button onclick="logout()">Logout</button>
+<div id="loginPage" class="login-box">
+  <h2>Admin Login</h2>
+  <input id="email" placeholder="Email" />
+  <input id="password" type="password" placeholder="Password" />
+  <button onclick="login()">Login</button>
+</div>
 
-<h2>Bookings</h2>
-<table>
-    <thead>
-        <tr>
+<div id="dashboard" style="display:none; width:100%;">
+
+  <div class="sidebar">
+    <h2>Gym Admin</h2>
+    <button onclick="showSection('home')">Dashboard</button>
+    <button onclick="showSection('members')">Members</button>
+    <button onclick="logout()">Logout</button>
+  </div>
+
+  <div class="main">
+
+    <div class="topbar">
+      <h1>Dashboard</h1>
+    </div>
+
+    <div id="home">
+      <div class="cards">
+        <div class="card">
+          <h3>Total Members</h3>
+          <p id="totalMembers">0</p>
+        </div>
+        <div class="card">
+          <h3>Revenue</h3>
+          <p id="revenue">₹0</p>
+        </div>
+      </div>
+
+      <canvas id="chart" style="margin-top:30px;"></canvas>
+    </div>
+
+    <div id="members" style="display:none;">
+      <h2>Members</h2>
+
+      <input id="name" placeholder="Name" />
+      <input id="fee" placeholder="Fee" type="number" />
+      <button onclick="addMember()">Add</button>
+
+      <table>
+        <thead>
+          <tr>
             <th>Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Service</th>
-            <th>Date</th>
-        </tr>
-    </thead>
-    <tbody id="bookingTable"></tbody>
-</table>
+            <th>Fee</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="memberTable"></tbody>
+      </table>
+    </div>
 
-<h2>Memberships</h2>
-<table>
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Plan</th>
-            <th>Start Date</th>
-        </tr>
-    </thead>
-    <tbody id="membershipTable"></tbody>
-</table>
+  </div>
+</div>
 
-<script src="dashboard.js"></script>
+<script src="script.js"></script>
+
 </body>
 </html>
