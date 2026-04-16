@@ -1,65 +1,59 @@
-body {
-    margin: 0;
-    font-family: 'Oswald', sans-serif;
-    background: #020617;
-    color: #e2e8f0;
-    padding: 20px;
+*{
 }
 
-/* Heading */
-h1 {
-    text-align: center;
-    color: #38bdf8;
+.cards{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:15px;
 }
 
-/* Section titles */
-h2 {
-    margin-top: 40px;
-    color: #38bdf8;
+.card{
+  background:#1f2937;
+  padding:20px;
+  border-radius:12px;
 }
 
-/* Logout button */
-button {
-    padding: 8px 15px;
-    background: transparent;
-    border: 2px solid #0ea5e9;
-    color: #38bdf8;
-    cursor: pointer;
-    float: right;
-    transition: 0.3s;
+table{
+  width:100%;
+  margin-top:20px;
+  border-collapse:collapse;
 }
 
-button:hover {
-    background: #0ea5e9;
-    color: #020617;
+th,td{
+  padding:10px;
+  border-bottom:1px solid #334155;
+  text-align:left;
 }
 
-/* Table */
-table {
-    width: 100%;
-    margin-top: 20px;
-    border-collapse: collapse;
-    border: 1px solid #0ea5e9;
+button.action{
+  padding:5px 10px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
 }
 
-/* Table cells */
-th, td {
-    padding: 12px;
-    text-align: center;
+.paid{ background:#16a34a; color:white; }
+.delete{ background:#dc2626; color:white; }
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
 }
 
-/* Header */
-th {
-    color: #38bdf8;
-    border-bottom: 1px solid #0ea5e9;
+input{
+  padding:8px;
+  border-radius:6px;
+  border:none;
+  margin-right:5px;
 }
 
-/* Rows */
-tr {
-    border-bottom: 1px solid rgba(14,165,233,0.2);
-}
-
-/* Hover row */
-tr:hover {
-    background: rgba(14,165,233,0.1);
+.login-box{
+  background:#1f2937;
+  padding:20px;
+  border-radius:10px;
+  width:300px;
+  margin:auto;
+  margin-top:100px;
 }
