@@ -1,113 +1,131 @@
+const API = "http://localhost:3000"; // change when deployed
 
-let members = [];
 let chart;
 
 // LOGIN
-function login(){
-  const email = document.getElementById("email").value;
-  const pass = document.getElementById("password").value;
-
-  if(email && pass){
-    localStorage.setItem("token","admin");
-    showDashboard();
-  }
+function login() {
+  fetch(API + "/api/admin/login", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({
+      email: document.getElementById("email").value,
+      password: document.getElementById("password").value
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      localStorage.setItem("token", "loggedin");
+      location.reload();
+    } else {
+      alert("Invalid login");
+    }
+  });
 }
 
 // LOGOUT
 function logout(){
-  localStorage.removeItem("token");
+  localStorage.removeItem('token');
   location.reload();
 }
 
-// SHOW DASHBOARD
-function showDashboard(){
-  document.getElementById("loginPage").style.display="none";
-  document.getElementById("dashboard").style.display="flex";
-  initChart();
-  render();
-}
-
-// SECTION SWITCH
+// SHOW SECTION
 function showSection(id){
-  document.getElementById("home").style.display="none";
-  document.getElementById("members").style.display="none";
-  document.getElementById(id).style.display="block";
+  document.getElementById('home').style.display='none';
+  document.getElementById('members').style.display='none';
+  document.getElementById(id).style.display='block';
 }
 
 // ADD MEMBER
 function addMember(){
-  const name = document.getElementById("name").value;
-  const fee = Number(document.getElementById("fee").value);
+  const name = document.getElementById('name').value;
+  const fee = document.getElementById('fee').value;
 
-  if(!name || !fee) return;
+  fetch(API + "/api/members", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ name, fee })
+  })
+  .then(() => loadMembers());
+}
 
-  members.push({name, fee, paid:false});
-  render();
+// LOAD MEMBERS
+function loadMembers(){
+  fetch(API + "/api/members")
+    .then(res => res.json())
+    .then(data => {
+      const table = document.getElementById('memberTable');
+      table.innerHTML = "";
+
+      let revenue = 0;
+
+      data.forEach(m => {
+        if (m.paid) revenue += Number(m.fee);
+
+        table.innerHTML += `
+          <tr>
+            <td>${m.name}</td>
+            <td>₹${m.fee}</td>
+            <td>${m.paid ? 'Paid' : 'Pending'}</td>
+            <td>
+              <button onclick="markPaid(${m.id})">Paid</button>
+              <button onclick="deleteMember(${m.id})">Delete</button>
+            </td>
+          </tr>
+        `;
+      });
+
+      document.getElementById("totalMembers").innerText = data.length;
+      document.getElementById("revenue").innerText = "₹" + revenue;
+
+      updateChart(revenue);
+    });
 }
 
 // MARK PAID
-function markPaid(i){
-  members[i].paid = true;
-  render();
+function markPaid(id){
+  fetch(API + `/api/members/${id}/pay`, {
+    method: "PUT"
+  })
+  .then(() => loadMembers());
 }
 
 // DELETE
-function deleteMember(i){
-  members.splice(i,1);
-  render();
-}
-
-// RENDER TABLE + STATS
-function render(){
-  const table = document.getElementById("memberTable");
-  table.innerHTML = "";
-
-  let revenue = 0;
-
-  members.forEach((m,i)=>{
-    if(m.paid) revenue += m.fee;
-
-    table.innerHTML += `
-      <tr>
-        <td>${m.name}</td>
-        <td>₹${m.fee}</td>
-        <td>${m.paid ? "Paid" : "Pending"}</td>
-        <td>
-          <button class="action paid" onclick="markPaid(${i})">Paid</button>
-          <button class="action delete" onclick="deleteMember(${i})">Delete</button>
-        </td>
-      </tr>
-    `;
-  });
-
-  document.getElementById("totalMembers").innerText = members.length;
-  document.getElementById("revenue").innerText = "₹" + revenue;
-
-  updateChart(revenue);
+function deleteMember(id){
+  fetch(API + `/api/members/${id}`, {
+    method: "DELETE"
+  })
+  .then(() => loadMembers());
 }
 
 // CHART
 function initChart(){
-  const ctx = document.getElementById("chart");
+  const ctx = document.getElementById('chart');
 
-  chart = new Chart(ctx,{
-    type:"bar",
+  chart = new Chart(ctx, {
+    type:'bar',
     data:{
-      labels:["Revenue"],
+      labels:['Revenue'],
       datasets:[{
-        label:"Revenue",
+        label:'Revenue',
         data:[0]
       }]
     }
   });
 }
 
-function updateChart(revenue){
-  chart.data.datasets[0].data = [revenue];
-  chart.update();
+function updateChart(value){
+  if(chart){
+    chart.data.datasets[0].data = [value];
+    chart.update();
+  }
 }
 
-// AUTO LOGIN CHECK
-if(localStorage.getItem("token")){
-  showDashboard();
+// INIT
+if(localStorage.getItem('token')){
+  document.getElementById('loginPage').style.display='none';
+  document.getElementById('dashboard').style.display='flex';
+
+  initChart();
+  loadMembers();
 }
