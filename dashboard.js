@@ -100,19 +100,19 @@ function deleteMember(id){
 // 📅 LOAD BOOKINGS
 function loadBookings(){
   fetch(`${BASE_URL}/api/bookings`)
-  .then(res=>res.json())
-  .then(data=>{
-    console.log(data); // debug
+  .then(res => res.json())
+  .then(data => {
+    console.log(data); // DEBUG (see data in console)
 
     const table = document.getElementById("bookingTable");
-    table.innerHTML="";
+    table.innerHTML = "";
 
-    data.forEach(b=>{
+    data.forEach(b => {
       table.innerHTML += `
         <tr>
-          <td>${b.name}</td>
-          <td>${b.date}</td>
-          <td>${b.slot}</td>
+          <td>${b.name || b.username}</td>
+          <td>${b.date || '-'}</td>
+          <td>${b.slot || b.time}</td>
         </tr>
       `;
     });
