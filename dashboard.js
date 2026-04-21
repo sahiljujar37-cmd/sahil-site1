@@ -1,109 +1,21 @@
 const BASE_URL = "https://backend-4-v4ii.onrender.com";
 
-// 🔐 CHECK LOGIN
-if(localStorage.getItem("adminLogin") !== "true"){
-  window.location.href = "admin.html";
-}
-
-// 🚪 LOGOUT
-function logout(){
-  localStorage.removeItem("adminLogin");
-  window.location.href = "admin.html";
-}
-
-// 📂 SECTION SWITCH
+// SWITCH SECTION
 function showSection(id){
-  document.getElementById('home').style.display='none';
-  document.getElementById('members').style.display='none';
   document.getElementById('booking').style.display='none';
+  document.getElementById('members').style.display='none';
 
   document.getElementById(id).style.display='block';
 
   if(id === 'booking') loadBookings();
+  if(id === 'members') loadMembers();
 }
 
-// ➕ ADD MEMBER
-function addMember(){
-  const name = document.getElementById('name').value;
-  const fee = document.getElementById('fee').value;
-  const plan = document.getElementById('plan').value;
-
-  fetch(`${BASE_URL}/api/members`, {
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({name, fee, plan})
-  })
-  .then(()=> {
-    document.getElementById('name').value="";
-    document.getElementById('fee').value="";
-    document.getElementById('plan').value="";
-    loadMembers();
-  });
-}
-
-// 📋 LOAD MEMBERS
-function loadMembers(){
-  fetch(`${BASE_URL}/api/members`)
-  .then(res=>res.json())
-  .then(data=>{
-    const table = document.getElementById("memberTable");
-    table.innerHTML="";
-
-    let revenue = 0;
-
-    data.forEach(m=>{
-      if(m.paid) revenue += Number(m.fee);
-
-      table.innerHTML += `
-        <tr>
-          <td>${m.name}</td>
-          <td>₹${m.fee}</td>
-          <td>${m.plan || '-'}</td>
-          <td>${m.paid ? 'Paid':'Pending'}</td>
-          <td>
-            <button onclick="markPaid(${m.id})">Paid</button>
-            <button onclick="deleteMember(${m.id})">Delete</button>
-          </td>
-        </tr>
-      `;
-    });
-
-    document.getElementById("totalMembers").innerText = data.length;
-    document.getElementById("revenue").innerText = revenue;
-  });
-}
-
-// 🔍 SEARCH MEMBER
-function searchMember(){
-  const value = document.getElementById("search").value.toLowerCase();
-  const rows = document.querySelectorAll("#memberTable tr");
-
-  rows.forEach(row=>{
-    row.style.display = row.innerText.toLowerCase().includes(value) ? "" : "none";
-  });
-}
-
-// 💰 MARK PAID
-function markPaid(id){
-  if(confirm("Confirm payment?")){
-    fetch(`${BASE_URL}/api/members/${id}/pay`, {method:"PUT"})
-    .then(()=>loadMembers());
-  }
-}
-
-// ❌ DELETE MEMBER
-function deleteMember(id){
-  fetch(`${BASE_URL}/api/members/${id}`, {method:"DELETE"})
-  .then(()=>loadMembers());
-}
-
-// 📅 LOAD BOOKINGS
+// LOAD BOOKINGS
 function loadBookings(){
   fetch(`${BASE_URL}/api/bookings`)
   .then(res => res.json())
   .then(res => {
-    console.log(res); // debug
-
     const table = document.getElementById("bookingTable");
     table.innerHTML = "";
 
@@ -111,13 +23,82 @@ function loadBookings(){
       table.innerHTML += `
         <tr>
           <td>${b.name}</td>
-          <td>${b.date}</td>
+          <td>${b.phone}</td>
           <td>${b.service}</td>
+          <td>${b.date}</td>
+          <td>
+            <button onclick="convertToMember('${b.name}')">Add Member</button>
+          </td>
         </tr>
       `;
     });
   });
 }
-// 🚀 INIT
-loadMembers();
-loadBookings();
+
+// CONVERT BOOKING → MEMBER
+function convertToMember(name){
+  const fee = prompt("Enter fee:");
+
+  if(!fee) return;
+
+  fetch(`${BASE_URL}/api/members`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      name: name,
+      fee: fee,
+      paid: true
+    })
+  })
+  .then(() => {
+    alert("Member added!");
+    loadMembers();
+  });
+}
+
+// ADD MEMBER MANUAL
+function addMember(){
+  const name = document.getElementById('name').value;
+  const fee = document.getElementById('fee').value;
+
+  fetch(`${BASE_URL}/api/members`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ name, fee, paid: true })
+  })
+  .then(() => loadMembers());
+}
+
+// LOAD MEMBERS
+function loadMembers(){
+  fetch(`${BASE_URL}/api/members`)
+  .then(res => res.json())
+  .then(res => {
+    const table = document.getElementById('memberTable');
+    table.innerHTML = "";
+
+    let revenue = 0;
+
+    res.data.forEach(m => {
+      if(m.paid) revenue += Number(m.fee || 0);
+
+      table.innerHTML += `
+        <tr>
+          <td>${m.name}</td>
+          <td>₹${m.fee}</td>
+          <td>${m.paid ? 'Paid' : 'Pending'}</td>
+        </tr>
+      `;
+    });
+
+    document.getElementById("totalMembers").innerText = res.data.length;
+    document.getElementById("revenue").innerText = revenue;
+  });
+}
+
+// DEFAULT LOAD
+showSection('booking');
