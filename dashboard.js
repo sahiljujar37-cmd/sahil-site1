@@ -1,17 +1,17 @@
 const BASE_URL = "https://backend-4-v4ii.onrender.com";
 
-// CHECK LOGIN
+// 🔐 CHECK LOGIN
 if(localStorage.getItem("adminLogin") !== "true"){
   window.location.href = "admin.html";
 }
 
-// LOGOUT
+// 🚪 LOGOUT
 function logout(){
   localStorage.removeItem("adminLogin");
   window.location.href = "admin.html";
 }
 
-// SECTION SWITCH
+// 📂 SECTION SWITCH
 function showSection(id){
   document.getElementById('home').style.display='none';
   document.getElementById('members').style.display='none';
@@ -22,20 +22,7 @@ function showSection(id){
   if(id === 'booking') loadBookings();
 }
 
-
-// SECTION SWITCH
-function showSection(id){
-  document.getElementById('home').style.display='none';
-  document.getElementById('members').style.display='none';
-  document.getElementById('booking').style.display='none';
-
-  document.getElementById(id).style.display='block';
-
-  if(id === 'booking') loadBookings();
-}
-
-
-// ADD MEMBER
+// ➕ ADD MEMBER
 function addMember(){
   const name = document.getElementById('name').value;
   const fee = document.getElementById('fee').value;
@@ -46,10 +33,15 @@ function addMember(){
     headers:{"Content-Type":"application/json"},
     body:JSON.stringify({name, fee, plan})
   })
-  .then(()=>loadMembers());
+  .then(()=> {
+    document.getElementById('name').value="";
+    document.getElementById('fee').value="";
+    document.getElementById('plan').value="";
+    loadMembers();
+  });
 }
 
-// LOAD MEMBERS
+// 📋 LOAD MEMBERS
 function loadMembers(){
   fetch(`${BASE_URL}/api/members`)
   .then(res=>res.json())
@@ -81,7 +73,7 @@ function loadMembers(){
   });
 }
 
-// SEARCH
+// 🔍 SEARCH MEMBER
 function searchMember(){
   const value = document.getElementById("search").value.toLowerCase();
   const rows = document.querySelectorAll("#memberTable tr");
@@ -91,7 +83,7 @@ function searchMember(){
   });
 }
 
-// MARK PAID
+// 💰 MARK PAID
 function markPaid(id){
   if(confirm("Confirm payment?")){
     fetch(`${BASE_URL}/api/members/${id}/pay`, {method:"PUT"})
@@ -99,17 +91,19 @@ function markPaid(id){
   }
 }
 
-// DELETE
+// ❌ DELETE MEMBER
 function deleteMember(id){
   fetch(`${BASE_URL}/api/members/${id}`, {method:"DELETE"})
   .then(()=>loadMembers());
 }
 
-// BOOKINGS
+// 📅 LOAD BOOKINGS
 function loadBookings(){
   fetch(`${BASE_URL}/api/bookings`)
   .then(res=>res.json())
   .then(data=>{
+    console.log(data); // debug
+
     const table = document.getElementById("bookingTable");
     table.innerHTML="";
 
@@ -125,6 +119,6 @@ function loadBookings(){
   });
 }
 
-// INIT
+// 🚀 INIT
 loadMembers();
-loadBookings();  // ADD THIS LINE
+loadBookings();
