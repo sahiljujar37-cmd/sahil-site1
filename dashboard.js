@@ -22,6 +22,19 @@ function showSection(id){
   if(id === 'booking') loadBookings();
 }
 
+
+// SECTION SWITCH
+function showSection(id){
+  document.getElementById('home').style.display='none';
+  document.getElementById('members').style.display='none';
+  document.getElementById('booking').style.display='none';
+
+  document.getElementById(id).style.display='block';
+
+  if(id === 'booking') loadBookings();
+}
+
+
 // ADD MEMBER
 function addMember(){
   const name = document.getElementById('name').value;
