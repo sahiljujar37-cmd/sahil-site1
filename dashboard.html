@@ -8,8 +8,6 @@
 <body>
 
 <div class="container">
-
-  <!-- Sidebar -->
   <div class="sidebar">
     <h2>Fitness Club</h2>
     <ul>
@@ -21,58 +19,36 @@
     </ul>
   </div>
 
-  <!-- Main -->
   <div class="main">
-
     <h1>Dashboard</h1>
 
-    <!-- Cards -->
     <div class="cards">
       <div class="card">Bookings<br><span id="totalBookings">0</span></div>
       <div class="card">Members<br><span id="totalMembers">0</span></div>
-      <div class="card">Pending Membership<br><span id="pending">0</span></div>
-      <div class="card">Active Membership<br><span id="active">0</span></div>
+      <div class="card">Pending<br><span id="pending">0</span></div>
+      <div class="card">Active<br><span id="active">0</span></div>
     </div>
 
-    <!-- Booking Section -->
     <div class="section">
       <h2>Bookings</h2>
-      <input type="text" id="bName" placeholder="Name">
-      <input type="text" id="bService" placeholder="Service">
-      <button onclick="addBooking()">Add Booking</button>
+      <input id="bName" placeholder="Name">
+      <input id="bService" placeholder="Service">
+      <button onclick="addBooking()">Add</button>
 
       <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Service</th>
-            <th>Status</th>
-          </tr>
-        </thead>
         <tbody id="bookingList"></tbody>
       </table>
     </div>
 
-    <!-- Membership Section -->
     <div class="section">
-      <h2>Memberships (Manual Confirm)</h2>
-
-      <input type="text" id="mName" placeholder="Member Name">
-      <input type="text" id="mPlan" placeholder="Plan">
-      <button onclick="addMember()">Add Membership</button>
+      <h2>Membership</h2>
+      <input id="mName" placeholder="Name">
+      <input id="mPlan" placeholder="Plan">
+      <button onclick="addMember()">Add</button>
 
       <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Plan</th>
-            <th>Status</th>
-            <th>Action</th>
-          </tr>
-        </thead>
         <tbody id="memberList"></tbody>
       </table>
-
     </div>
 
   </div>
