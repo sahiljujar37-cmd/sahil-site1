@@ -1,6 +1,4 @@
-
 const BASE_URL = "https://backend-4-v4ii.onrender.com";
-
 
 function login() {
   const email = document.getElementById("email").value;
@@ -11,7 +9,7 @@ function login() {
     return;
   }
 
-  fetch(${BASE_URL}/api/admin/login, {
+  fetch(`${BASE_URL}/api/admin/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -22,7 +20,6 @@ function login() {
   .then(data => {
     if (data.success) {
       localStorage.setItem("adminLogin", "true");
-
       window.location.href = "dashboard.html";
     } else {
       alert("Invalid email or password");
