@@ -114,3 +114,4 @@ function loadBookings(){
 
 // INIT
 loadMembers();
+loadBookings();  // ADD THIS LINE
