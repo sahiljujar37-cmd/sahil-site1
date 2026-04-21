@@ -1,4 +1,4 @@
-const API = "http://localhost:3000"; // change when deployed
+const API = "https://backend-4-v4ii.onrender.com"; // change when deployed
 
 let chart;
 
