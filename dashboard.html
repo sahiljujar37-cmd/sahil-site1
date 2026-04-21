@@ -1,83 +1,61 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>Admin Dashboard</title>
-  <link rel="stylesheet" href="dashboard.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
 
-<div class="dashboard">
+<h2>Admin Dashboard</h2>
 
-  <!-- SIDEBAR -->
-  <div class="sidebar">
-    <h2>Gym Admin</h2>
-    <button onclick="showSection('home')">Dashboard</button>
-    <button onclick="showSection('members')">Members</button>
-    <button onclick="showSection('booking')">Bookings</button>
-    <button onclick="logout()">Logout</button>
-  </div>
+<!-- NAVIGATION -->
+<button onclick="showSection('booking')">Bookings</button>
+<button onclick="showSection('members')">Members</button>
 
-  <!-- MAIN -->
-  <div class="main">
+<!-- ================= BOOKING SECTION ================= -->
+<div id="booking">
+  <h3>Bookings</h3>
 
-    <!-- HOME -->
-    <div id="home">
-      <h2>Dashboard</h2>
+  <table border="1">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Phone</th>
+        <th>Service</th>
+        <th>Date</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="bookingTable"></tbody>
+  </table>
+</div>
 
-      <div class="cards">
-        <div class="card">Total: <span id="totalMembers">0</span></div>
-        <div class="card">Revenue: ₹<span id="revenue">0</span></div>
-      </div>
+<!-- ================= MEMBERS SECTION ================= -->
+<div id="members" style="display:none;">
+  <h3>Members</h3>
 
-      <canvas id="chart"></canvas>
-    </div>
+  <!-- ADD MEMBER -->
+  <input type="text" id="name" placeholder="Name">
+  <input type="number" id="fee" placeholder="Fee">
+  <button onclick="addMember()">Add Member</button>
 
-    <!-- MEMBERS -->
-    <div id="members" style="display:none;">
-      <h2>Members</h2>
+  <h4>Total Members: <span id="totalMembers">0</span></h4>
+  <h4>Total Revenue: ₹<span id="revenue">0</span></h4>
 
-      <input id="search" placeholder="Search..." onkeyup="searchMember()">
-
-      <input id="name" placeholder="Name">
-      <input id="fee" placeholder="Fee">
-      <input id="plan" placeholder="Plan">
-      <button onclick="addMember()">Add</button>
-
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Fee</th>
-            <th>Plan</th>
-            <th>Status</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody id="memberTable"></tbody>
-      </table>
-    </div>
-
-    <!-- BOOKINGS -->
-    <div id="booking" style="display:none;">
-      <h2>Bookings</h2>
-
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Date</th>
-            <th>Slot</th>
-          </tr>
-        </thead>
-        <tbody id="bookingTable"></tbody>
-      </table>
-    </div>
-
-  </div>
+  <table border="1">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Fee</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody id="memberTable"></tbody>
+  </table>
 </div>
 
 <script src="dashboard.js"></script>
+
 </body>
 </html>
