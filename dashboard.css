@@ -1,7 +1,7 @@
 body {
   margin: 0;
-  font-family: Arial;
-  background: #f5f6fa;
+  font-family: 'Segoe UI', sans-serif;
+  background: #f4f6fb;
 }
 
 .container {
@@ -10,32 +10,53 @@ body {
 
 /* Sidebar */
 .sidebar {
-  width: 220px;
-  background: #1e1e2f;
+  width: 230px;
+  background: #0f172a;
   color: white;
   height: 100vh;
   padding: 20px;
 }
 
-.sidebar ul {
-  list-style: none;
-  padding: 0;
+.sidebar h2 {
+  margin-bottom: 20px;
 }
 
 .sidebar li {
-  padding: 10px;
+  list-style: none;
+  padding: 12px;
   cursor: pointer;
+  border-radius: 8px;
 }
 
-.sidebar li.active {
-  background: #6c63ff;
-  border-radius: 5px;
+.sidebar li.active,
+.sidebar li:hover {
+  background: #6366f1;
 }
 
 /* Main */
 .main {
   flex: 1;
   padding: 20px;
+}
+
+/* Topbar */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.topbar input {
+  width: 60%;
+  padding: 10px;
+}
+
+.addBtn {
+  background: #6366f1;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 8px;
 }
 
 /* Cards */
@@ -47,34 +68,32 @@ body {
 
 .card {
   flex: 1;
-  background: white;
   padding: 20px;
-  border-radius: 10px;
-  text-align: center;
+  border-radius: 12px;
+  color: white;
+}
+
+.card p {
+  font-size: 24px;
   font-weight: bold;
 }
 
-/* Sections */
-.section {
+.purple { background: #6366f1; }
+.green { background: #22c55e; }
+.orange { background: #f59e0b; }
+.blue { background: #3b82f6; }
+
+/* Grid */
+.grid {
+  display: flex;
+  gap: 20px;
+}
+
+.box {
+  flex: 1;
   background: white;
-  padding: 20px;
-  border-radius: 10px;
-  margin-bottom: 20px;
-}
-
-/* Inputs */
-input {
-  padding: 8px;
-  margin: 5px;
-}
-
-button {
-  padding: 8px 12px;
-  background: #6c63ff;
-  color: white;
-  border: none;
-  cursor: pointer;
-  border-radius: 5px;
+  padding: 15px;
+  border-radius: 12px;
 }
 
 /* Table */
@@ -87,4 +106,15 @@ table {
 th, td {
   padding: 10px;
   border-bottom: 1px solid #ddd;
+}
+
+/* Buttons */
+button {
+  margin-top: 5px;
+  padding: 6px 10px;
+  border: none;
+  background: #6366f1;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
 }
