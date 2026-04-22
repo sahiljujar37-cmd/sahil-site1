@@ -4,117 +4,81 @@ body {
   background: #f4f6fb;
 }
 
-.container {
-  display: flex;
-}
-
-/* Sidebar */
-.sidebar {
-  width: 230px;
+/* Title */
+h1 {
+  text-align: center;
+  padding: 15px;
   background: #0f172a;
   color: white;
-  height: 100vh;
-  padding: 20px;
+  margin: 0;
 }
 
-.sidebar h2 {
-  margin-bottom: 20px;
+/* Section spacing */
+h2 {
+  margin-top: 30px;
 }
 
-.sidebar li {
-  list-style: none;
-  padding: 12px;
-  cursor: pointer;
+/* Stats */
+h3 {
+  display: inline-block;
+  margin: 15px;
+  padding: 10px 20px;
+  background: #6366f1;
+  color: white;
   border-radius: 8px;
 }
 
-.sidebar li.active,
-.sidebar li:hover {
-  background: #6366f1;
-}
-
-/* Main */
-.main {
-  flex: 1;
-  padding: 20px;
-}
-
-/* Topbar */
-.topbar {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 20px;
-}
-
-.topbar input {
-  width: 60%;
-  padding: 10px;
-}
-
-.addBtn {
-  background: #6366f1;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 8px;
-}
-
-/* Cards */
-.cards {
-  display: flex;
-  gap: 15px;
-  margin-bottom: 20px;
-}
-
-.card {
-  flex: 1;
-  padding: 20px;
-  border-radius: 12px;
-  color: white;
-}
-
-.card p {
-  font-size: 24px;
-  font-weight: bold;
-}
-
-.purple { background: #6366f1; }
-.green { background: #22c55e; }
-.orange { background: #f59e0b; }
-.blue { background: #3b82f6; }
-
-/* Grid */
-.grid {
-  display: flex;
-  gap: 20px;
-}
-
-.box {
-  flex: 1;
-  background: white;
-  padding: 15px;
-  border-radius: 12px;
-}
-
-/* Table */
+/* Tables */
 table {
-  width: 100%;
-  margin-top: 10px;
+  width: 95%;
+  margin: 20px auto;
   border-collapse: collapse;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
 }
 
-th, td {
+th {
+  background: #6366f1;
+  color: white;
+  padding: 12px;
+}
+
+td {
   padding: 10px;
+  text-align: center;
   border-bottom: 1px solid #ddd;
 }
 
-/* Buttons */
+/* Row hover */
+tr:hover {
+  background: #f1f5f9;
+}
+
+/* Button */
 button {
-  margin-top: 5px;
   padding: 6px 10px;
-  border: none;
-  background: #6366f1;
+  background: #22c55e;
   color: white;
+  border: none;
   border-radius: 6px;
   cursor: pointer;
+}
+
+button:hover {
+  background: #16a34a;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  table {
+    font-size: 12px;
+  }
+
+  h3 {
+    display: block;
+    margin: 10px auto;
+    width: 80%;
+    text-align: center;
+  }
 }
