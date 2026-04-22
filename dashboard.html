@@ -3,108 +3,45 @@
 <head>
   <meta charset="UTF-8">
   <title>Zunjar Club Dashboard</title>
-  <link rel="stylesheet" href="dashboard.css">
 </head>
 <body>
 
-<div class="container">
+<h1>ZUNJAR CLUB DASHBOARD</h1>
 
-  <!-- Sidebar -->
-  <div class="sidebar">
-    <h2>ZUNJAR CLUB</h2>
-    <ul>
-      <li class="active">Dashboard</li>
-      <li>Bookings</li>
-      <li>Memberships</li>
-      <li>Members</li>
-      <li>Payments</li>
-      <li>Reports</li>
-      <li>Logout</li>
-    </ul>
-  </div>
+<!-- Stats -->
+<h3>Total Bookings: <span id="totalBookings">0</span></h3>
+<h3>Total Members: <span id="totalMembers">0</span></h3>
 
-  <!-- Main -->
-  <div class="main">
+<hr>
 
-    <!-- Top Bar -->
-    <div class="topbar">
-      <input type="text" placeholder="Search members, bookings...">
-      <button class="addBtn">+ Add New</button>
-    </div>
+<!-- BOOKINGS -->
+<h2>Bookings</h2>
+<table border="1">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Service</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody id="bookingList"></tbody>
+</table>
 
-    <h1>Dashboard</h1>
+<hr>
 
-    <!-- Cards -->
-    <div class="cards">
-      <div class="card purple">
-        <h3>Total Bookings</h3>
-        <p id="totalBookings">0</p>
-      </div>
-
-      <div class="card green">
-        <h3>Total Members</h3>
-        <p id="totalMembers">0</p>
-      </div>
-
-      <div class="card orange">
-        <h3>Pending Membership</h3>
-        <p id="pending">0</p>
-      </div>
-
-      <div class="card blue">
-        <h3>Active Membership</h3>
-        <p id="active">0</p>
-      </div>
-    </div>
-
-    <!-- Tables -->
-    <div class="grid">
-
-      <!-- Bookings -->
-      <div class="box">
-        <h2>Recent Bookings</h2>
-
-        <input id="bName" placeholder="Name">
-        <input id="bService" placeholder="Service">
-        <button onclick="addBooking()">Add Booking</button>
-
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Service</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody id="bookingList"></tbody>
-        </table>
-      </div>
-
-      <!-- Membership -->
-      <div class="box">
-        <h2>Membership Requests</h2>
-
-        <input id="mName" placeholder="Name">
-        <input id="mPlan" placeholder="Plan">
-        <button onclick="addMember()">Add Membership</button>
-
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Plan</th>
-              <th>Status</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody id="memberList"></tbody>
-        </table>
-      </div>
-
-    </div>
-
-  </div>
-</div>
+<!-- MEMBERS -->
+<h2>Members</h2>
+<table border="1">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Plan</th>
+      <th>Status</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody id="memberList"></tbody>
+</table>
 
 <script src="dashboard.js"></script>
 </body>
