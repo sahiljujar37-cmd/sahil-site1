@@ -1,19 +1,13 @@
 const BASE_URL = "https://backend-4-v4ii.onrender.com";
 
-// Show error on screen
-function showError(msg) {
-  document.body.innerHTML += `<p style="color:red;">${msg}</p>`;
-}
-
 // ================= BOOKINGS =================
 async function getBookings() {
   try {
     const res = await fetch(`${BASE_URL}/api/bookings`);
     
-    if (!res.ok) throw new Error("Bookings API not working");
+    if (!res.ok) throw new Error("Booking API not working");
 
     const data = await res.json();
-    console.log("Bookings:", data);
 
     const list = document.getElementById("bookingList");
     list.innerHTML = "";
@@ -21,8 +15,8 @@ async function getBookings() {
     data.forEach(b => {
       list.innerHTML += `
         <tr>
-          <td>${b.name}</td>
-          <td>${b.service}</td>
+          <td>${b.name || "-"}</td>
+          <td>${b.service || "-"}</td>
           <td>${b.status || "Confirmed"}</td>
         </tr>
       `;
@@ -32,7 +26,7 @@ async function getBookings() {
 
   } catch (err) {
     console.error(err);
-    showError("❌ Booking API error: " + err.message);
+    alert("❌ Booking API error");
   }
 }
 
@@ -41,27 +35,23 @@ async function getMembers() {
   try {
     const res = await fetch(`${BASE_URL}/api/members`);
     
-    if (!res.ok) throw new Error("Members API not working");
+    if (!res.ok) throw new Error("Member API not working");
 
     const data = await res.json();
-    console.log("Members:", data);
 
     const list = document.getElementById("memberList");
     list.innerHTML = "";
 
-    let pending = 0;
     let active = 0;
 
     data.forEach(m => {
-
-      if (m.status === "Pending") pending++;
-      else active++;
+      if (m.status === "Active") active++;
 
       list.innerHTML += `
         <tr>
-          <td>${m.name}</td>
-          <td>${m.plan}</td>
-          <td>${m.status}</td>
+          <td>${m.name || "-"}</td>
+          <td>${m.plan || "-"}</td>
+          <td>${m.status || "Pending"}</td>
           <td>
             ${m.status === "Pending"
               ? `<button onclick="confirmMember('${m._id}')">Confirm</button>`
@@ -72,12 +62,10 @@ async function getMembers() {
     });
 
     document.getElementById("totalMembers").innerText = data.length;
-    document.getElementById("pending").innerText = pending;
-    document.getElementById("active").innerText = active;
 
   } catch (err) {
     console.error(err);
-    showError("❌ Member API error: " + err.message);
+    alert("❌ Member API error");
   }
 }
 
@@ -96,7 +84,7 @@ async function confirmMember(id) {
 
   } catch (err) {
     console.error(err);
-    showError("❌ Confirm error: " + err.message);
+    alert("❌ Confirm error");
   }
 }
 
