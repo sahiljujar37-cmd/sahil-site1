@@ -1,76 +1,91 @@
-let bookings = [];
-let members = [];
+const BASE_URL = "https://backend-4-v4ii.onrender.com";
 
-// Booking
-function addBooking() {
-  const name = document.getElementById("bName").value;
-  const service = document.getElementById("bService").value;
+// ================= BOOKINGS =================
+async function getBookings() {
+  try {
+    const res = await fetch(`${BASE_URL}/api/bookings`);
+    const data = await res.json();
 
-  if (!name || !service) return alert("Fill all fields");
+    const list = document.getElementById("bookingList");
+    list.innerHTML = "";
 
-  bookings.push({ name, service, status: "Confirmed" });
-  renderBookings();
+    data.forEach(b => {
+      list.innerHTML += `
+        <tr>
+          <td>${b.name || "-"}</td>
+          <td>${b.service || "-"}</td>
+          <td style="color:green;">${b.status || "Confirmed"}</td>
+        </tr>
+      `;
+    });
+
+    document.getElementById("totalBookings").innerText = data.length;
+
+  } catch (err) {
+    console.error("Booking fetch error:", err);
+  }
 }
 
-function renderBookings() {
-  const list = document.getElementById("bookingList");
-  list.innerHTML = "";
+// ================= MEMBERS =================
+async function getMembers() {
+  try {
+    const res = await fetch(`${BASE_URL}/api/members`);
+    const data = await res.json();
 
-  bookings.forEach(b => {
-    list.innerHTML += `
-      <tr>
-        <td>${b.name}</td>
-        <td>${b.service}</td>
-        <td style="color:green;">${b.status}</td>
-      </tr>
-    `;
-  });
+    const list = document.getElementById("memberList");
+    list.innerHTML = "";
 
-  document.getElementById("totalBookings").innerText = bookings.length;
+    let pending = 0;
+    let active = 0;
+
+    data.forEach(m => {
+
+      if (m.status === "Pending") pending++;
+      else active++;
+
+      list.innerHTML += `
+        <tr>
+          <td>${m.name || "-"}</td>
+          <td>${m.plan || "-"}</td>
+          <td>${m.status || "Pending"}</td>
+          <td>
+            ${m.status === "Pending"
+              ? `<button onclick="confirmMember('${m._id}')">Confirm</button>`
+              : "✔"}
+          </td>
+        </tr>
+      `;
+    });
+
+    document.getElementById("totalMembers").innerText = data.length;
+    document.getElementById("pending").innerText = pending;
+    document.getElementById("active").innerText = active;
+
+  } catch (err) {
+    console.error("Member fetch error:", err);
+  }
 }
 
-// Membership
-function addMember() {
-  const name = document.getElementById("mName").value;
-  const plan = document.getElementById("mPlan").value;
+// ================= CONFIRM MEMBER =================
+async function confirmMember(id) {
+  try {
+    await fetch(`${BASE_URL}/api/members/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ status: "Active" })
+    });
 
-  if (!name || !plan) return alert("Fill all fields");
+    getMembers(); // refresh list
 
-  members.push({ name, plan, status: "Pending" });
-  renderMembers();
+  } catch (err) {
+    console.error("Confirm error:", err);
+  }
 }
 
-function confirmMember(index) {
-  members[index].status = "Active";
-  renderMembers();
-}
-
-function renderMembers() {
-  const list = document.getElementById("memberList");
-  list.innerHTML = "";
-
-  let pending = 0;
-  let active = 0;
-
-  members.forEach((m, i) => {
-    if (m.status === "Pending") pending++;
-    else active++;
-
-    list.innerHTML += `
-      <tr>
-        <td>${m.name}</td>
-        <td>${m.plan}</td>
-        <td>${m.status}</td>
-        <td>
-          ${m.status === "Pending"
-            ? `<button onclick="confirmMember(${i})">Confirm</button>`
-            : "✔"}
-        </td>
-      </tr>
-    `;
-  });
-
-  document.getElementById("totalMembers").innerText = members.length;
-  document.getElementById("pending").innerText = pending;
-  document.getElementById("active").innerText = active;
-}
+// ================= AUTO LOAD =================
+window.onload = function () {
+  getBookings();
+  getMembers();
+};
