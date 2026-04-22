@@ -1,10 +1,19 @@
 const BASE_URL = "https://backend-4-v4ii.onrender.com";
 
+// Show error on screen
+function showError(msg) {
+  document.body.innerHTML += `<p style="color:red;">${msg}</p>`;
+}
+
 // ================= BOOKINGS =================
 async function getBookings() {
   try {
     const res = await fetch(`${BASE_URL}/api/bookings`);
+    
+    if (!res.ok) throw new Error("Bookings API not working");
+
     const data = await res.json();
+    console.log("Bookings:", data);
 
     const list = document.getElementById("bookingList");
     list.innerHTML = "";
@@ -12,9 +21,9 @@ async function getBookings() {
     data.forEach(b => {
       list.innerHTML += `
         <tr>
-          <td>${b.name || "-"}</td>
-          <td>${b.service || "-"}</td>
-          <td style="color:green;">${b.status || "Confirmed"}</td>
+          <td>${b.name}</td>
+          <td>${b.service}</td>
+          <td>${b.status || "Confirmed"}</td>
         </tr>
       `;
     });
@@ -22,7 +31,8 @@ async function getBookings() {
     document.getElementById("totalBookings").innerText = data.length;
 
   } catch (err) {
-    console.error("Booking fetch error:", err);
+    console.error(err);
+    showError("❌ Booking API error: " + err.message);
   }
 }
 
@@ -30,7 +40,11 @@ async function getBookings() {
 async function getMembers() {
   try {
     const res = await fetch(`${BASE_URL}/api/members`);
+    
+    if (!res.ok) throw new Error("Members API not working");
+
     const data = await res.json();
+    console.log("Members:", data);
 
     const list = document.getElementById("memberList");
     list.innerHTML = "";
@@ -45,9 +59,9 @@ async function getMembers() {
 
       list.innerHTML += `
         <tr>
-          <td>${m.name || "-"}</td>
-          <td>${m.plan || "-"}</td>
-          <td>${m.status || "Pending"}</td>
+          <td>${m.name}</td>
+          <td>${m.plan}</td>
+          <td>${m.status}</td>
           <td>
             ${m.status === "Pending"
               ? `<button onclick="confirmMember('${m._id}')">Confirm</button>`
@@ -62,30 +76,32 @@ async function getMembers() {
     document.getElementById("active").innerText = active;
 
   } catch (err) {
-    console.error("Member fetch error:", err);
+    console.error(err);
+    showError("❌ Member API error: " + err.message);
   }
 }
 
-// ================= CONFIRM MEMBER =================
+// ================= CONFIRM =================
 async function confirmMember(id) {
   try {
-    await fetch(`${BASE_URL}/api/members/${id}`, {
+    const res = await fetch(`${BASE_URL}/api/members/${id}`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status: "Active" })
     });
 
-    getMembers(); // refresh list
+    if (!res.ok) throw new Error("Confirm failed");
+
+    getMembers();
 
   } catch (err) {
-    console.error("Confirm error:", err);
+    console.error(err);
+    showError("❌ Confirm error: " + err.message);
   }
 }
 
-// ================= AUTO LOAD =================
-window.onload = function () {
+// ================= LOAD =================
+window.onload = () => {
   getBookings();
   getMembers();
 };
