@@ -1,7 +1,7 @@
 let bookings = [];
 let members = [];
 
-// Add Booking
+// Booking
 function addBooking() {
   const name = document.getElementById("bName").value;
   const service = document.getElementById("bService").value;
@@ -12,7 +12,6 @@ function addBooking() {
   renderBookings();
 }
 
-// Render Bookings
 function renderBookings() {
   const list = document.getElementById("bookingList");
   list.innerHTML = "";
@@ -22,7 +21,7 @@ function renderBookings() {
       <tr>
         <td>${b.name}</td>
         <td>${b.service}</td>
-        <td>${b.status}</td>
+        <td style="color:green;">${b.status}</td>
       </tr>
     `;
   });
@@ -30,7 +29,7 @@ function renderBookings() {
   document.getElementById("totalBookings").innerText = bookings.length;
 }
 
-// Add Member (Pending first)
+// Membership
 function addMember() {
   const name = document.getElementById("mName").value;
   const plan = document.getElementById("mPlan").value;
@@ -41,13 +40,11 @@ function addMember() {
   renderMembers();
 }
 
-// Confirm manually
 function confirmMember(index) {
   members[index].status = "Active";
   renderMembers();
 }
 
-// Render Members
 function renderMembers() {
   const list = document.getElementById("memberList");
   list.innerHTML = "";
@@ -65,8 +62,8 @@ function renderMembers() {
         <td>${m.plan}</td>
         <td>${m.status}</td>
         <td>
-          ${m.status === "Pending" ? 
-            `<button onclick="confirmMember(${i})">Confirm</button>` 
+          ${m.status === "Pending"
+            ? `<button onclick="confirmMember(${i})">Confirm</button>`
             : "✔"}
         </td>
       </tr>
