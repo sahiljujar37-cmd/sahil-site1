@@ -7,6 +7,7 @@ if (!email || !password) {
 
 let membersData = [];
 let bookingsData = [];
+let revenue = 0;
 
 /* ================= BOOKINGS ================= */
 function loadBookings() {
@@ -32,9 +33,6 @@ function loadBookings() {
                 <td>${b.date}</td>
             </tr>`;
         });
-    })
-    .catch(() => {
-        console.log("Booking load failed");
     });
 }
 
@@ -55,13 +53,13 @@ function loadMembers() {
         const active = membersData.filter(m => m.status === "Paid").length;
         document.getElementById("activeMembers").innerText = active;
 
-        document.getElementById("revenue").innerText = active * 500;
-    })
-    .catch(() => {
-        console.log("Members load failed");
+        revenue = active * 500;
+        document.getElementById("revenue").innerText = revenue;
     });
 }
 
+
+/* ================= RENDER ================= */
 function renderMembers(data) {
     const table = document.getElementById("membershipTable");
     table.innerHTML = "";
@@ -80,51 +78,67 @@ function renderMembers(data) {
             <td>
                 <button class="pay-btn" 
                     data-index="${index}" 
-                    data-status="${status}">
+                    data-status="${status}"
+                    style="${status === 'Paid' ? 'background:green;color:white;' : ''}">
                     ${status === "Paid" ? "Paid" : "Mark Paid"}
                 </button>
             </td>
         </tr>`;
     });
 }
-    // ✅ FIX CLICK ISSUE (event listener)
-    document.querySelectorAll(".pay-btn").forEach(btn => {
-        btn.addEventListener("click", function () {
-            const index = this.getAttribute("data-index");
-            const status = this.getAttribute("data-status");
 
-            togglePaid(index, status);
+
+/* ================= CLICK HANDLER ================= */
+document.addEventListener("click", function(e) {
+    if (e.target.classList.contains("pay-btn")) {
+
+        const btn = e.target;
+        const index = btn.getAttribute("data-index");
+        const currentStatus = btn.getAttribute("data-status");
+
+        const newStatus = currentStatus === "Paid" ? "Pending" : "Paid";
+
+        // 🔥 INSTANT UI CHANGE
+        if (newStatus === "Paid") {
+            btn.innerText = "Paid";
+            btn.style.background = "green";
+            btn.style.color = "white";
+        } else {
+            btn.innerText = "Mark Paid";
+            btn.style.background = "";
+            btn.style.color = "";
+        }
+
+        btn.setAttribute("data-status", newStatus);
+
+        // 🔥 UPDATE REVENUE INSTANTLY
+        if (newStatus === "Paid") {
+            revenue += 500;
+        } else {
+            revenue -= 500;
+        }
+        document.getElementById("revenue").innerText = revenue;
+
+        // 🔥 BACKEND UPDATE
+        fetch(`https://backend-4-v4ii.onrender.com/api/memberships/${index}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                email,
+                password
+            },
+            body: JSON.stringify({ status: newStatus })
+        })
+        .catch(() => {
+            alert("Server error ❌");
         });
-    });
-}
+    }
+});
 
-
-function togglePaid(index, currentStatus) {
-    const newStatus = currentStatus === "Paid" ? "Pending" : "Paid";
-
-    fetch(`https://backend-4-v4ii.onrender.com/api/memberships/${index}`, {
-        method: "PUT",
-        headers: {
-            "Content-Type": "application/json",
-            email,
-            password
-        },
-        body: JSON.stringify({ status: newStatus })
-    })
-    .then(() => {
-        loadMembers(); // reload data
-    })
-    .catch(() => {
-        alert("Update failed ❌");
-    });
-}
 
 /* ================= SEARCH ================= */
 function searchMember() {
-    const input = document.getElementById("search");
-    if (!input) return;
-
-    const value = input.value.toLowerCase();
+    const value = document.getElementById("search").value.toLowerCase();
 
     const filtered = membersData.filter(m =>
         (m.name && m.name.toLowerCase().includes(value)) ||
@@ -142,15 +156,6 @@ function logout() {
 }
 
 
-/* ================= LOAD ALL ================= */
+/* ================= LOAD ================= */
 loadBookings();
 loadMembers();
-// GLOBAL CLICK HANDLER (VERY IMPORTANT)
-document.addEventListener("click", function(e) {
-    if (e.target.classList.contains("pay-btn")) {
-        const index = e.target.getAttribute("data-index");
-        const status = e.target.getAttribute("data-status");
-
-        togglePaid(index, status);
-    }
-});
