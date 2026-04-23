@@ -1,46 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="dashboard.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gym Admin Dashboard</title>
+<link rel="stylesheet" href="dashboard.css">
 </head>
+
 <body>
 
-<h1>Admin Dashboard</h1>
+<h1>🏋️ Admin Dashboard</h1>
 
 <button onclick="logout()">Logout</button>
 
+<!-- 🔥 STATS -->
+<div class="stats">
+    <div class="card">Total Members: <span id="totalMembers">0</span></div>
+    <div class="card">Active: <span id="activeMembers">0</span></div>
+    <div class="card">Bookings: <span id="totalBookings">0</span></div>
+    <div class="card">Revenue: ₹<span id="revenue">0</span></div>
+</div>
+
+<!-- 🔍 SEARCH -->
+<input type="text" id="search" placeholder="Search member..." onkeyup="searchMember()">
+
 <h2>Bookings</h2>
-<table border="1">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Service</th>
-            <th>Date</th>
-        </tr>
-    </thead>
-    <tbody id="bookingTable"></tbody>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Email</th>
+<th>Phone</th>
+<th>Service</th>
+<th>Date</th>
+</tr>
+</thead>
+<tbody id="bookingTable"></tbody>
 </table>
 
 <h2>Memberships</h2>
-<table border="1">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Plan</th>
-            <th>Start Date</th>
-            <th>Status</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody id="membershipTable"></tbody>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Email</th>
+<th>Phone</th>
+<th>Plan</th>
+<th>Date</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody id="membershipTable"></tbody>
 </table>
+
 <script src="dashboard.js"></script>
 </body>
 </html>
