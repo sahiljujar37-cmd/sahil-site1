@@ -1,6 +1,6 @@
 body {
-    font-family: Arial;
-    background: #111;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #0f172a, #020617);
     color: white;
     display: flex;
     justify-content: center;
@@ -8,36 +8,54 @@ body {
     height: 100vh;
 }
 
+/* Login Box */
 .login-box {
-    background: #222;
+    background: rgba(15, 23, 42, 0.9);
     padding: 30px;
-    border-radius: 10px;
-    width: 300px;
+    border-radius: 12px;
+    width: 320px;
     text-align: center;
+    box-shadow: 0 0 20px rgba(0, 153, 255, 0.3);
+    border: 1px solid rgba(0, 153, 255, 0.2);
 }
 
 .login-box h2 {
     margin-bottom: 20px;
+    color: #38bdf8;
 }
 
+/* Inputs */
 input {
     width: 100%;
     padding: 10px;
     margin: 10px 0;
     border: none;
-    border-radius: 5px;
+    border-radius: 6px;
+    background: #020617;
+    color: white;
+    border: 1px solid #1e3a8a;
 }
 
+input:focus {
+    outline: none;
+    border-color: #38bdf8;
+    box-shadow: 0 0 5px #38bdf8;
+}
+
+/* Button */
 button {
     width: 100%;
     padding: 10px;
-    background: orange;
+    background: linear-gradient(90deg, #0ea5e9, #2563eb);
     border: none;
-    color: black;
+    color: white;
     font-weight: bold;
+    border-radius: 6px;
     cursor: pointer;
+    transition: 0.3s;
 }
 
 button:hover {
-    background: gold;
+    background: linear-gradient(90deg, #38bdf8, #3b82f6);
+    box-shadow: 0 0 10px #38bdf8;
 }
