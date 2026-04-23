@@ -53,26 +53,30 @@ function loadMemberships() {
                     <td>
                         ${
                             status === "Paid"
-                            ? "✔ Paid"
-                            : `<button onclick="markPaid(${index})">Mark Paid</button>`
+                            ? `<button style="background:green;color:white;" disabled>Paid</button>`
+                            : `<button id="btn-${index}" onclick="markPaid(${index})">Mark Paid</button>`
                         }
                     </td>
                 </tr>
             `;
         });
-    })
-    .catch(err => {
-        console.error("Load error:", err);
     });
 }
 
 loadMemberships();
 
 
-/* ================= MARK AS PAID (FIXED) ================= */
+/* ================= MARK AS PAID ================= */
 function markPaid(index) {
-    console.log("Clicked index:", index);
+    const btn = document.getElementById(`btn-${index}`);
 
+    // 🔥 Instant UI change
+    btn.innerText = "Paid";
+    btn.style.background = "green";
+    btn.style.color = "white";
+    btn.disabled = true;
+
+    // Backend update
     fetch(`https://backend-4-v4ii.onrender.com/api/memberships/${index}`, {
         method: "PUT",
         headers: {
@@ -82,20 +86,12 @@ function markPaid(index) {
         },
         body: JSON.stringify({ status: "Paid" })
     })
-    .then(res => {
-        if (!res.ok) {
-            throw new Error("Update failed");
-        }
-        return res.json();
+    .then(res => res.json())
+    .then(() => {
+        console.log("Updated in backend");
     })
-    .then(data => {
-        console.log("Updated:", data);
-        alert("Marked as Paid ✅");
-        loadMemberships();
-    })
-    .catch(err => {
-        console.error("Error:", err);
-        alert("Update failed ❌");
+    .catch(() => {
+        alert("Error saving ❌");
     });
 }
 
