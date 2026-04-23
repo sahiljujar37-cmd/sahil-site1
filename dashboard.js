@@ -60,14 +60,19 @@ function loadMemberships() {
                 </tr>
             `;
         });
+    })
+    .catch(err => {
+        console.error("Load error:", err);
     });
 }
 
 loadMemberships();
 
 
-/* ================= MARK AS PAID ================ */
+/* ================= MARK AS PAID (FIXED) ================= */
 function markPaid(index) {
+    console.log("Clicked index:", index);
+
     fetch(`https://backend-4-v4ii.onrender.com/api/memberships/${index}`, {
         method: "PUT",
         headers: {
@@ -77,10 +82,20 @@ function markPaid(index) {
         },
         body: JSON.stringify({ status: "Paid" })
     })
-    .then(res => res.json())
-    .then(() => {
+    .then(res => {
+        if (!res.ok) {
+            throw new Error("Update failed");
+        }
+        return res.json();
+    })
+    .then(data => {
+        console.log("Updated:", data);
         alert("Marked as Paid ✅");
-        loadMemberships(); // refresh table
+        loadMemberships();
+    })
+    .catch(err => {
+        console.error("Error:", err);
+        alert("Update failed ❌");
     });
 }
 
