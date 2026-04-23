@@ -1,17 +1,55 @@
-const API = "https://backend-4-v4ii.onrender.com";
+const email = localStorage.getItem("adminEmail");
+const password = localStorage.getItem("adminPassword");
 
-async function loadDashboard() {
-  let members = await fetch(`${API}/members`).then(r => r.json());
-  let bookings = await fetch(`${API}/bookings`).then(r => r.json());
-  let payments = await fetch(`${API}/payments`).then(r => r.json());
-
-  document.getElementById("m").innerText = members.length;
-  document.getElementById("b").innerText = bookings.length;
-
-  let total = 0;
-  payments.forEach(p => total += Number(p.amount));
-
-  document.getElementById("r").innerText = total;
+// Redirect if not logged in
+if (!email || !password) {
+    window.location.href = "admin.html";
 }
 
-loadDashboard();
+// Load bookings
+fetch("http://localhost:3000/api/bookings", {
+    headers: { email, password }
+})
+.then(res => res.json())
+.then(data => {
+    const table = document.getElementById("bookingTable");
+
+    data.data.forEach(b => {
+        table.innerHTML += `
+            <tr>
+                <td>${b.name}</td>
+                <td>${b.email}</td>
+                <td>${b.phone}</td>
+                <td>${b.service}</td>
+                <td>${b.date}</td>
+            </tr>
+        `;
+    });
+});
+
+// Load memberships
+fetch("https://backend-4-v4ii.onrender.com/api/memberships", {
+    headers: { email, password }
+})
+.then(res => res.json())
+.then(data => {
+    const table = document.getElementById("membershipTable");
+
+    data.data.forEach(m => {
+        table.innerHTML += `
+            <tr>
+                <td>${m.name}</td>
+                <td>${m.email}</td>
+                <td>${m.phone}</td>
+                <td>${m.plan}</td>
+                <td>${m.startDate}</td>
+            </tr>
+        `;
+    });
+});
+
+// Logout
+function logout() {
+    localStorage.clear();
+    window.location.href = "admin.html";
+}
