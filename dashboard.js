@@ -56,6 +56,7 @@ function loadMembers() {
         document.getElementById("totalMembers").innerText = membersData.length;
 
         const active = membersData.filter(m => m.status === "Paid").length;
+
         document.getElementById("activeMembers").innerText = active;
 
         revenue = active * 500;
@@ -81,8 +82,8 @@ function renderMembers(data) {
             <td>${m.startDate}</td>
             <td>${status}</td>
             <td>
-                <button class="pay-btn" 
-                    data-index="${index}" 
+                <button class="pay-btn"
+                    data-index="${index}"
                     data-status="${status}"
                     style="${status === 'Paid' ? 'background:green;color:white;' : ''}">
                     ${status === "Paid" ? "Paid" : "Mark Paid"}
@@ -97,7 +98,7 @@ function renderMembers(data) {
 }
 
 
-/* ================= CLICK HANDLER ================= */
+/* ================= CLICK HANDLER (PAY BUTTON) ================= */
 document.addEventListener("click", function(e) {
     if (e.target.classList.contains("pay-btn")) {
 
@@ -107,26 +108,23 @@ document.addEventListener("click", function(e) {
 
         const newStatus = currentStatus === "Paid" ? "Pending" : "Paid";
 
+        // UI change instantly
         if (newStatus === "Paid") {
             btn.innerText = "Paid";
             btn.style.background = "green";
             btn.style.color = "white";
+            revenue += 500;
         } else {
             btn.innerText = "Mark Paid";
             btn.style.background = "";
             btn.style.color = "";
-        }
-
-        btn.setAttribute("data-status", newStatus);
-
-        if (newStatus === "Paid") {
-            revenue += 500;
-        } else {
             revenue -= 500;
         }
 
+        btn.setAttribute("data-status", newStatus);
         document.getElementById("revenue").innerText = revenue;
 
+        // backend update
         fetch(`https://backend-4-v4ii.onrender.com/api/memberships/${index}`, {
             method: "PUT",
             headers: {
@@ -140,7 +138,7 @@ document.addEventListener("click", function(e) {
 });
 
 
-/* ================= DELETE FUNCTIONS ================= */
+/* ================= DELETE BOOKING ================= */
 function deleteBooking(index) {
     if (!confirm("Delete this booking?")) return;
 
@@ -155,6 +153,7 @@ function deleteBooking(index) {
 }
 
 
+/* ================= DELETE MEMBER ================= */
 function deleteMember(index) {
     if (!confirm("Delete this member?")) return;
 
@@ -189,6 +188,6 @@ function logout() {
 }
 
 
-/* ================= LOAD ================= */
+/* ================= INIT ================= */
 loadBookings();
 loadMembers();
