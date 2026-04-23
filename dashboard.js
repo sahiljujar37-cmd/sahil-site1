@@ -66,7 +66,7 @@ function loadMemberships() {
 loadMemberships();
 
 
-/* ================= MARK AS PAID ================= */
+/* ================= MARK AS PAID ================ */
 function markPaid(index) {
     fetch(`https://backend-4-v4ii.onrender.com/api/memberships/${index}`, {
         method: "PUT",
