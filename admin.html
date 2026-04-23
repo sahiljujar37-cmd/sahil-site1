@@ -1,44 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Zunjar Club Admin</title>
-  <link rel="stylesheet" href="admin.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Fitness Club</title>
+    <link rel="stylesheet" href="admin.css">
 </head>
 <body>
 
-<div class="container">
+<div class="login-box">
+    <h2>Admin Login</h2>
 
-  <h1>ZUNJAR CLUB ADMIN</h1>
+    <input type="email" id="email" placeholder="Enter Email">
+    <input type="password" id="password" placeholder="Enter Password">
 
-  <!-- Login -->
-  <div id="loginBox">
-    <input id="email" placeholder="Admin Email">
-    <input id="password" type="password" placeholder="Password">
     <button onclick="login()">Login</button>
-  </div>
-
-  <!-- Dashboard -->
-  <div id="adminPanel" style="display:none;">
-
-    <h2>Bookings</h2>
-
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Service</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody id="bookingList"></tbody>
-    </table>
-
-    <br>
-    <button onclick="logout()">Logout</button>
-
-  </div>
-
 </div>
 
 <script src="admin.js"></script>
