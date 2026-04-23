@@ -50,7 +50,6 @@ function loadMembers() {
 
         renderMembers(membersData);
 
-        // ✅ FIX stats
         document.getElementById("totalMembers").innerText = membersData.length;
 
         const active = membersData.filter(m => m.status === "Paid").length;
@@ -64,7 +63,7 @@ function loadMembers() {
 }
 
 
-/* ================= RENDER ================= */
+/* ================= RENDER MEMBERS ================= */
 function renderMembers(data) {
     const table = document.getElementById("membershipTable");
     table.innerHTML = "";
@@ -72,8 +71,9 @@ function renderMembers(data) {
     data.forEach((m, index) => {
         const status = m.status || "Pending";
 
-        table.innerHTML += `
-        <tr>
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
             <td>${m.name}</td>
             <td>${m.email}</td>
             <td>${m.phone}</td>
@@ -81,18 +81,29 @@ function renderMembers(data) {
             <td>${m.startDate}</td>
             <td>${status}</td>
             <td>
-                ${
-                    status === "Paid"
-                    ? `<button style="background:green;color:white;" onclick="togglePaid(${index}, 'Paid')">Paid</button>`
-                    : `<button onclick="togglePaid(${index}, 'Pending')">Mark Paid</button>`
-                }
+                <button class="pay-btn" data-index="${index}" data-status="${status}"
+                style="${status === 'Paid' ? 'background:green;color:white;' : ''}">
+                    ${status === "Paid" ? "Paid" : "Mark Paid"}
+                </button>
             </td>
-        </tr>`;
+        `;
+
+        table.appendChild(row);
+    });
+
+    // ✅ FIX CLICK ISSUE (event listener)
+    document.querySelectorAll(".pay-btn").forEach(btn => {
+        btn.addEventListener("click", function () {
+            const index = this.getAttribute("data-index");
+            const status = this.getAttribute("data-status");
+
+            togglePaid(index, status);
+        });
     });
 }
 
 
-/* ================= TOGGLE (REAL FIX) ================= */
+/* ================= TOGGLE ================= */
 function togglePaid(index, currentStatus) {
     const newStatus = currentStatus === "Paid" ? "Pending" : "Paid";
 
@@ -107,8 +118,7 @@ function togglePaid(index, currentStatus) {
     })
     .then(res => res.json())
     .then(() => {
-        // ✅ IMPORTANT: reload from backend
-        loadMembers();
+        loadMembers(); // reload data
     })
     .catch(() => {
         alert("Update failed ❌");
@@ -116,7 +126,7 @@ function togglePaid(index, currentStatus) {
 }
 
 
-/* ================= SEARCH (FIXED) ================= */
+/* ================= SEARCH ================= */
 function searchMember() {
     const input = document.getElementById("search");
     if (!input) return;
