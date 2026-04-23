@@ -53,44 +53,46 @@ function loadMemberships() {
                     <td>
                         ${
                             status === "Paid"
-                            ? `<button style="background:green;color:white;" disabled>Paid</button>`
-                            : `<button id="btn-${index}" onclick="markPaid(${index})">Mark Paid</button>`
+                            ? `<button id="btn-${index}" style="background:green;color:white;" onclick="togglePaid(${index}, 'Paid')">Paid</button>`
+                            : `<button id="btn-${index}" onclick="togglePaid(${index}, 'Pending')">Mark Paid</button>`
                         }
                     </td>
                 </tr>
             `;
         });
+    })
+    .catch(err => {
+        console.error("Load error:", err);
     });
 }
 
 loadMemberships();
 
 
+/* ================= TOGGLE PAID ================= */
 function togglePaid(index, currentStatus) {
     const btn = document.getElementById(`btn-${index}`);
-
     let newStatus;
 
-    // Toggle logic
     if (currentStatus === "Paid") {
+        // Change to Pending
         newStatus = "Pending";
 
-        // UI change
         btn.innerText = "Mark Paid";
         btn.style.background = "";
         btn.style.color = "";
         btn.setAttribute("onclick", `togglePaid(${index}, 'Pending')`);
     } else {
+        // Change to Paid
         newStatus = "Paid";
 
-        // UI change
         btn.innerText = "Paid";
         btn.style.background = "green";
         btn.style.color = "white";
         btn.setAttribute("onclick", `togglePaid(${index}, 'Paid')`);
     }
 
-    // Send to backend
+    // Update backend
     fetch(`https://backend-4-v4ii.onrender.com/api/memberships/${index}`, {
         method: "PUT",
         headers: {
@@ -102,12 +104,14 @@ function togglePaid(index, currentStatus) {
     })
     .then(res => res.json())
     .then(() => {
-        console.log("Status updated:", newStatus);
+        console.log("Updated:", newStatus);
     })
-    .catch(() => {
-        alert("Error ❌");
+    .catch(err => {
+        console.error("Error:", err);
+        alert("Update failed ❌");
     });
 }
+
 
 /* ================= LOGOUT ================= */
 function logout() {
