@@ -1,36 +1,77 @@
 body {
-    font-family: Arial;
-    background: #111;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #020617, #0f172a);
     color: white;
     padding: 20px;
 }
 
+/* Title */
 h1 {
     text-align: center;
+    color: #38bdf8;
+    margin-bottom: 20px;
 }
 
+/* Table */
 table {
     width: 100%;
     margin-bottom: 30px;
     border-collapse: collapse;
-    background: #222;
+    background: rgba(15, 23, 42, 0.9);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
 }
 
+/* Cells */
 th, td {
-    padding: 10px;
+    padding: 12px;
     text-align: center;
 }
 
+/* Header */
 th {
-    background: orange;
-    color: black;
+    background: linear-gradient(90deg, #0ea5e9, #2563eb);
+    color: white;
 }
 
+/* Row hover */
+tr:hover {
+    background: rgba(56, 189, 248, 0.1);
+}
+
+/* Buttons */
 button {
-    padding: 10px;
-    margin-bottom: 20px;
-    background: red;
-    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
     border: none;
     cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+/* Default button */
+button {
+    background: linear-gradient(90deg, #0ea5e9, #2563eb);
+    color: white;
+}
+
+/* Hover */
+button:hover {
+    background: linear-gradient(90deg, #38bdf8, #3b82f6);
+}
+
+/* Paid button (green) */
+button[style*="green"] {
+    background: #22c55e !important;
+    color: white;
+}
+
+/* Logout button */
+button:first-of-type {
+    background: crimson;
+}
+
+button:first-of-type:hover {
+    background: red;
 }
