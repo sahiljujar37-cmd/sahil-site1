@@ -62,8 +62,6 @@ function loadMembers() {
     });
 }
 
-
-/* ================= RENDER MEMBERS ================= */
 function renderMembers(data) {
     const table = document.getElementById("membershipTable");
     table.innerHTML = "";
@@ -71,9 +69,8 @@ function renderMembers(data) {
     data.forEach((m, index) => {
         const status = m.status || "Pending";
 
-        const row = document.createElement("tr");
-
-        row.innerHTML = `
+        table.innerHTML += `
+        <tr>
             <td>${m.name}</td>
             <td>${m.email}</td>
             <td>${m.phone}</td>
@@ -81,16 +78,15 @@ function renderMembers(data) {
             <td>${m.startDate}</td>
             <td>${status}</td>
             <td>
-                <button class="pay-btn" data-index="${index}" data-status="${status}"
-                style="${status === 'Paid' ? 'background:green;color:white;' : ''}">
+                <button class="pay-btn" 
+                    data-index="${index}" 
+                    data-status="${status}">
                     ${status === "Paid" ? "Paid" : "Mark Paid"}
                 </button>
             </td>
-        `;
-
-        table.appendChild(row);
+        </tr>`;
     });
-
+}
     // ✅ FIX CLICK ISSUE (event listener)
     document.querySelectorAll(".pay-btn").forEach(btn => {
         btn.addEventListener("click", function () {
@@ -103,7 +99,6 @@ function renderMembers(data) {
 }
 
 
-/* ================= TOGGLE ================= */
 function togglePaid(index, currentStatus) {
     const newStatus = currentStatus === "Paid" ? "Pending" : "Paid";
 
@@ -116,7 +111,6 @@ function togglePaid(index, currentStatus) {
         },
         body: JSON.stringify({ status: newStatus })
     })
-    .then(res => res.json())
     .then(() => {
         loadMembers(); // reload data
     })
@@ -124,7 +118,6 @@ function togglePaid(index, currentStatus) {
         alert("Update failed ❌");
     });
 }
-
 
 /* ================= SEARCH ================= */
 function searchMember() {
@@ -152,3 +145,12 @@ function logout() {
 /* ================= LOAD ALL ================= */
 loadBookings();
 loadMembers();
+// GLOBAL CLICK HANDLER (VERY IMPORTANT)
+document.addEventListener("click", function(e) {
+    if (e.target.classList.contains("pay-btn")) {
+        const index = e.target.getAttribute("data-index");
+        const status = e.target.getAttribute("data-status");
+
+        togglePaid(index, status);
+    }
+});
