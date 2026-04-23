@@ -6,28 +6,37 @@ if (!email || !password) {
 }
 
 let membersData = [];
-let totalRevenue = 0;
+let bookingsData = [];
 
 /* ================= BOOKINGS ================= */
-fetch("https://backend-4-v4ii.onrender.com/api/bookings", {
-    headers: { email, password }
-})
-.then(res => res.json())
-.then(data => {
-    const table = document.getElementById("bookingTable");
-    document.getElementById("totalBookings").innerText = data.data.length;
+function loadBookings() {
+    fetch("https://backend-4-v4ii.onrender.com/api/bookings", {
+        headers: { email, password }
+    })
+    .then(res => res.json())
+    .then(data => {
+        bookingsData = data.data || [];
 
-    data.data.forEach(b => {
-        table.innerHTML += `
-        <tr>
-            <td>${b.name}</td>
-            <td>${b.email}</td>
-            <td>${b.phone}</td>
-            <td>${b.service}</td>
-            <td>${b.date}</td>
-        </tr>`;
+        document.getElementById("totalBookings").innerText = bookingsData.length;
+
+        const table = document.getElementById("bookingTable");
+        table.innerHTML = "";
+
+        bookingsData.forEach(b => {
+            table.innerHTML += `
+            <tr>
+                <td>${b.name}</td>
+                <td>${b.email}</td>
+                <td>${b.phone}</td>
+                <td>${b.service}</td>
+                <td>${b.date}</td>
+            </tr>`;
+        });
+    })
+    .catch(() => {
+        console.log("Booking load failed");
     });
-});
+}
 
 
 /* ================= MEMBERS ================= */
@@ -37,20 +46,22 @@ function loadMembers() {
     })
     .then(res => res.json())
     .then(data => {
-        membersData = data.data;
+        membersData = data.data || [];
+
         renderMembers(membersData);
 
+        // ✅ FIX stats
         document.getElementById("totalMembers").innerText = membersData.length;
 
         const active = membersData.filter(m => m.status === "Paid").length;
         document.getElementById("activeMembers").innerText = active;
 
-        totalRevenue = active * 500; // change price if needed
-        document.getElementById("revenue").innerText = totalRevenue;
+        document.getElementById("revenue").innerText = active * 500;
+    })
+    .catch(() => {
+        console.log("Members load failed");
     });
 }
-
-loadMembers();
 
 
 /* ================= RENDER ================= */
@@ -81,9 +92,9 @@ function renderMembers(data) {
 }
 
 
-/* ================= TOGGLE ================= */
-function togglePaid(index, status) {
-    const newStatus = status === "Paid" ? "Pending" : "Paid";
+/* ================= TOGGLE (REAL FIX) ================= */
+function togglePaid(index, currentStatus) {
+    const newStatus = currentStatus === "Paid" ? "Pending" : "Paid";
 
     fetch(`https://backend-4-v4ii.onrender.com/api/memberships/${index}`, {
         method: "PUT",
@@ -94,19 +105,27 @@ function togglePaid(index, status) {
         },
         body: JSON.stringify({ status: newStatus })
     })
+    .then(res => res.json())
     .then(() => {
+        // ✅ IMPORTANT: reload from backend
         loadMembers();
+    })
+    .catch(() => {
+        alert("Update failed ❌");
     });
 }
 
 
-/* ================= SEARCH ================= */
+/* ================= SEARCH (FIXED) ================= */
 function searchMember() {
-    const value = document.getElementById("search").value.toLowerCase();
+    const input = document.getElementById("search");
+    if (!input) return;
+
+    const value = input.value.toLowerCase();
 
     const filtered = membersData.filter(m =>
-        m.name.toLowerCase().includes(value) ||
-        m.phone.includes(value)
+        (m.name && m.name.toLowerCase().includes(value)) ||
+        (m.phone && m.phone.includes(value))
     );
 
     renderMembers(filtered);
@@ -118,3 +137,8 @@ function logout() {
     localStorage.clear();
     window.location.href = "admin.html";
 }
+
+
+/* ================= LOAD ALL ================= */
+loadBookings();
+loadMembers();
