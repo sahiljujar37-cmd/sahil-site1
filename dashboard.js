@@ -23,7 +23,7 @@ function loadBookings() {
         const table = document.getElementById("bookingTable");
         table.innerHTML = "";
 
-        bookingsData.forEach(b => {
+        bookingsData.forEach((b, index) => {
             table.innerHTML += `
             <tr>
                 <td>${b.name}</td>
@@ -31,6 +31,11 @@ function loadBookings() {
                 <td>${b.phone}</td>
                 <td>${b.service}</td>
                 <td>${b.date}</td>
+                <td>
+                    <button onclick="deleteBooking(${index})" style="background:red;color:white;">
+                        Delete
+                    </button>
+                </td>
             </tr>`;
         });
     });
@@ -59,7 +64,7 @@ function loadMembers() {
 }
 
 
-/* ================= RENDER ================= */
+/* ================= RENDER MEMBERS ================= */
 function renderMembers(data) {
     const table = document.getElementById("membershipTable");
     table.innerHTML = "";
@@ -82,6 +87,10 @@ function renderMembers(data) {
                     style="${status === 'Paid' ? 'background:green;color:white;' : ''}">
                     ${status === "Paid" ? "Paid" : "Mark Paid"}
                 </button>
+
+                <button onclick="deleteMember(${index})" style="background:red;color:white;margin-left:5px;">
+                    Delete
+                </button>
             </td>
         </tr>`;
     });
@@ -98,7 +107,6 @@ document.addEventListener("click", function(e) {
 
         const newStatus = currentStatus === "Paid" ? "Pending" : "Paid";
 
-        // 🔥 INSTANT UI CHANGE
         if (newStatus === "Paid") {
             btn.innerText = "Paid";
             btn.style.background = "green";
@@ -111,15 +119,14 @@ document.addEventListener("click", function(e) {
 
         btn.setAttribute("data-status", newStatus);
 
-        // 🔥 UPDATE REVENUE INSTANTLY
         if (newStatus === "Paid") {
             revenue += 500;
         } else {
             revenue -= 500;
         }
+
         document.getElementById("revenue").innerText = revenue;
 
-        // 🔥 BACKEND UPDATE
         fetch(`https://backend-4-v4ii.onrender.com/api/memberships/${index}`, {
             method: "PUT",
             headers: {
@@ -128,12 +135,38 @@ document.addEventListener("click", function(e) {
                 password
             },
             body: JSON.stringify({ status: newStatus })
-        })
-        .catch(() => {
-            alert("Server error ❌");
         });
     }
 });
+
+
+/* ================= DELETE FUNCTIONS ================= */
+function deleteBooking(index) {
+    if (!confirm("Delete this booking?")) return;
+
+    fetch(`https://backend-4-v4ii.onrender.com/api/bookings/${index}`, {
+        method: "DELETE",
+        headers: { email, password }
+    })
+    .then(() => {
+        loadBookings();
+    })
+    .catch(() => alert("Delete failed ❌"));
+}
+
+
+function deleteMember(index) {
+    if (!confirm("Delete this member?")) return;
+
+    fetch(`https://backend-4-v4ii.onrender.com/api/memberships/${index}`, {
+        method: "DELETE",
+        headers: { email, password }
+    })
+    .then(() => {
+        loadMembers();
+    })
+    .catch(() => alert("Delete failed ❌"));
+}
 
 
 /* ================= SEARCH ================= */
