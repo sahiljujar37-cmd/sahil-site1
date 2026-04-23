@@ -1,84 +1,36 @@
 body {
-  margin: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background: #f4f6fb;
+    font-family: Arial;
+    background: #111;
+    color: white;
+    padding: 20px;
 }
 
-/* Title */
 h1 {
-  text-align: center;
-  padding: 15px;
-  background: #0f172a;
-  color: white;
-  margin: 0;
+    text-align: center;
 }
 
-/* Section spacing */
-h2 {
-  margin-top: 30px;
-}
-
-/* Stats */
-h3 {
-  display: inline-block;
-  margin: 15px;
-  padding: 10px 20px;
-  background: #6366f1;
-  color: white;
-  border-radius: 8px;
-}
-
-/* Tables */
 table {
-  width: 95%;
-  margin: 20px auto;
-  border-collapse: collapse;
-  background: white;
-  border-radius: 10px;
-  overflow: hidden;
+    width: 100%;
+    margin-bottom: 30px;
+    border-collapse: collapse;
+    background: #222;
+}
+
+th, td {
+    padding: 10px;
+    text-align: center;
 }
 
 th {
-  background: #6366f1;
-  color: white;
-  padding: 12px;
+    background: orange;
+    color: black;
 }
 
-td {
-  padding: 10px;
-  text-align: center;
-  border-bottom: 1px solid #ddd;
-}
-
-/* Row hover */
-tr:hover {
-  background: #f1f5f9;
-}
-
-/* Button */
 button {
-  padding: 6px 10px;
-  background: #22c55e;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-button:hover {
-  background: #16a34a;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  table {
-    font-size: 12px;
-  }
-
-  h3 {
-    display: block;
-    margin: 10px auto;
-    width: 80%;
-    text-align: center;
-  }
+    padding: 10px;
+    margin-bottom: 20px;
+    background: red;
+    color: white;
+    border: none;
+    cursor: pointer;
 }
