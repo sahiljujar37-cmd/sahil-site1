@@ -66,17 +66,31 @@ function loadMemberships() {
 loadMemberships();
 
 
-/* ================= MARK AS PAID ================= */
-function markPaid(index) {
+function togglePaid(index, currentStatus) {
     const btn = document.getElementById(`btn-${index}`);
 
-    // 🔥 Instant UI change
-    btn.innerText = "Paid";
-    btn.style.background = "green";
-    btn.style.color = "white";
-    btn.disabled = true;
+    let newStatus;
 
-    // Backend update
+    // Toggle logic
+    if (currentStatus === "Paid") {
+        newStatus = "Pending";
+
+        // UI change
+        btn.innerText = "Mark Paid";
+        btn.style.background = "";
+        btn.style.color = "";
+        btn.setAttribute("onclick", `togglePaid(${index}, 'Pending')`);
+    } else {
+        newStatus = "Paid";
+
+        // UI change
+        btn.innerText = "Paid";
+        btn.style.background = "green";
+        btn.style.color = "white";
+        btn.setAttribute("onclick", `togglePaid(${index}, 'Paid')`);
+    }
+
+    // Send to backend
     fetch(`https://backend-4-v4ii.onrender.com/api/memberships/${index}`, {
         method: "PUT",
         headers: {
@@ -84,17 +98,16 @@ function markPaid(index) {
             email,
             password
         },
-        body: JSON.stringify({ status: "Paid" })
+        body: JSON.stringify({ status: newStatus })
     })
     .then(res => res.json())
     .then(() => {
-        console.log("Updated in backend");
+        console.log("Status updated:", newStatus);
     })
     .catch(() => {
-        alert("Error saving ❌");
+        alert("Error ❌");
     });
 }
-
 
 /* ================= LOGOUT ================= */
 function logout() {
