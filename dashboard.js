@@ -6,13 +6,14 @@ if (!email || !password) {
     window.location.href = "admin.html";
 }
 
-// Load bookings
-fetch("http://localhost:3000/api/bookings", {
+/* ================= BOOKINGS ================= */
+fetch("https://backend-4-v4ii.onrender.com/api/bookings", {
     headers: { email, password }
 })
 .then(res => res.json())
 .then(data => {
     const table = document.getElementById("bookingTable");
+    table.innerHTML = "";
 
     data.data.forEach(b => {
         table.innerHTML += `
@@ -27,28 +28,64 @@ fetch("http://localhost:3000/api/bookings", {
     });
 });
 
-// Load memberships
-fetch("https://backend-4-v4ii.onrender.com/api/memberships", {
-    headers: { email, password }
-})
-.then(res => res.json())
-.then(data => {
-    const table = document.getElementById("membershipTable");
 
-    data.data.forEach(m => {
-        table.innerHTML += `
-            <tr>
-                <td>${m.name}</td>
-                <td>${m.email}</td>
-                <td>${m.phone}</td>
-                <td>${m.plan}</td>
-                <td>${m.startDate}</td>
-            </tr>
-        `;
+/* ================= MEMBERSHIPS ================= */
+function loadMemberships() {
+    fetch("https://backend-4-v4ii.onrender.com/api/memberships", {
+        headers: { email, password }
+    })
+    .then(res => res.json())
+    .then(data => {
+        const table = document.getElementById("membershipTable");
+        table.innerHTML = "";
+
+        data.data.forEach((m, index) => {
+            const status = m.status || "Pending";
+
+            table.innerHTML += `
+                <tr>
+                    <td>${m.name}</td>
+                    <td>${m.email}</td>
+                    <td>${m.phone}</td>
+                    <td>${m.plan}</td>
+                    <td>${m.startDate}</td>
+                    <td>${status}</td>
+                    <td>
+                        ${
+                            status === "Paid"
+                            ? "✔ Paid"
+                            : `<button onclick="markPaid(${index})">Mark Paid</button>`
+                        }
+                    </td>
+                </tr>
+            `;
+        });
     });
-});
+}
 
-// Logout
+loadMemberships();
+
+
+/* ================= MARK AS PAID ================= */
+function markPaid(index) {
+    fetch(`https://backend-4-v4ii.onrender.com/api/memberships/${index}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            email,
+            password
+        },
+        body: JSON.stringify({ status: "Paid" })
+    })
+    .then(res => res.json())
+    .then(() => {
+        alert("Marked as Paid ✅");
+        loadMemberships(); // refresh table
+    });
+}
+
+
+/* ================= LOGOUT ================= */
 function logout() {
     localStorage.clear();
     window.location.href = "admin.html";
