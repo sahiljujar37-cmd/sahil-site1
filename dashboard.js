@@ -37,7 +37,8 @@ function loadBookings() {
                 </td>
             </tr>`;
         });
-    });
+    })
+    .catch(() => alert("Failed to load bookings ❌"));
 }
 
 
@@ -52,7 +53,8 @@ function loadMembers() {
 
         renderMembers(membersData);
         updateStats();
-    });
+    })
+    .catch(() => alert("Failed to load members ❌"));
 }
 
 
@@ -88,11 +90,12 @@ function renderMembers(data) {
             </td>
             <td>
                 <button class="paid-btn"
-                    onclick="markPaid('${m._id}', '${status}')">
-                    ${status === "Active" ? "Active" : "Mark Paid"}
+                    onclick="toggleStatus('${m._id}', '${status}')">
+                    ${status === "Active" ? "Deactivate" : "Mark Paid"}
                 </button>
 
-                <button class="delete-btn" onclick="deleteMember('${m._id}')">
+                <button class="delete-btn"
+                    onclick="deleteMember('${m._id}')">
                     Delete
                 </button>
             </td>
@@ -101,8 +104,8 @@ function renderMembers(data) {
 }
 
 
-/* ================= MARK PAID ================= */
-function markPaid(id, currentStatus) {
+/* ================= TOGGLE STATUS ================= */
+function toggleStatus(id, currentStatus) {
 
     const newStatus = currentStatus === "Active" ? "Pending" : "Active";
 
@@ -117,7 +120,7 @@ function markPaid(id, currentStatus) {
     })
     .then(res => res.json())
     .then(() => {
-        loadMembers(); // reload from backend (REAL FIX)
+        loadMembers(); // reload correct data
     })
     .catch(() => alert("Update failed ❌"));
 }
