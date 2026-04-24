@@ -90,8 +90,8 @@ function renderMembers(data) {
             </td>
             <td>
                 <button class="paid-btn"
-                    onclick="toggleStatus('${m._id}', '${status}')">
-                    ${status === "Active" ? "Deactivate" : "Mark Paid"}
+                    onclick="toggleStatus('${m._id}')">
+                    ${status === "Active" ? "Make Unpaid" : "Mark Paid"}
                 </button>
 
                 <button class="delete-btn"
@@ -103,11 +103,15 @@ function renderMembers(data) {
     });
 }
 
-
 /* ================= TOGGLE STATUS ================= */
-function toggleStatus(id, currentStatus) {
+function toggleStatus(id) {
 
-    const newStatus = currentStatus === "Active" ? "Pending" : "Active";
+    // find latest member data (IMPORTANT FIX)
+    const member = membersData.find(m => m._id === id);
+
+    if (!member) return;
+
+    const newStatus = member.status === "Active" ? "Pending" : "Active";
 
     fetch(`https://backend-4-v4ii.onrender.com/api/memberships/${id}`, {
         method: "PUT",
@@ -120,11 +124,10 @@ function toggleStatus(id, currentStatus) {
     })
     .then(res => res.json())
     .then(() => {
-        loadMembers(); // reload correct data
+        loadMembers(); // reload fresh data
     })
     .catch(() => alert("Update failed ❌"));
 }
-
 
 /* ================= DELETE BOOKING ================= */
 function deleteBooking(id) {
