@@ -7,7 +7,6 @@ if (!email || !password) {
 
 let membersData = [];
 let bookingsData = [];
-let revenue = 0;
 
 /* ================= BOOKINGS ================= */
 function loadBookings() {
@@ -23,7 +22,7 @@ function loadBookings() {
         const table = document.getElementById("bookingTable");
         table.innerHTML = "";
 
-        bookingsData.forEach((b, index) => {
+        bookingsData.forEach((b) => {
             table.innerHTML += `
             <tr>
                 <td>${b.name}</td>
@@ -32,7 +31,7 @@ function loadBookings() {
                 <td>${b.service}</td>
                 <td>${b.date}</td>
                 <td>
-                    <button onclick="deleteBooking(${index})" style="background:red;color:white;">
+                    <button class="delete-btn" onclick="deleteBooking('${b._id}')">
                         Delete
                     </button>
                 </td>
@@ -52,16 +51,20 @@ function loadMembers() {
         membersData = data.data || [];
 
         renderMembers(membersData);
-
-        document.getElementById("totalMembers").innerText = membersData.length;
-
-        const active = membersData.filter(m => m.status === "Paid").length;
-
-        document.getElementById("activeMembers").innerText = active;
-
-        revenue = active * 500;
-        document.getElementById("revenue").innerText = revenue;
+        updateStats();
     });
+}
+
+
+/* ================= UPDATE STATS ================= */
+function updateStats() {
+    document.getElementById("totalMembers").innerText = membersData.length;
+
+    const active = membersData.filter(m => m.status === "Active").length;
+    document.getElementById("activeMembers").innerText = active;
+
+    const revenue = active * 500;
+    document.getElementById("revenue").innerText = revenue;
 }
 
 
@@ -70,7 +73,7 @@ function renderMembers(data) {
     const table = document.getElementById("membershipTable");
     table.innerHTML = "";
 
-    data.forEach((m, index) => {
+    data.forEach((m) => {
         const status = m.status || "Pending";
 
         table.innerHTML += `
@@ -80,16 +83,16 @@ function renderMembers(data) {
             <td>${m.phone}</td>
             <td>${m.plan}</td>
             <td>${m.startDate}</td>
-            <td>${status}</td>
+            <td class="${status === 'Active' ? 'status-active' : 'status-pending'}">
+                ${status}
+            </td>
             <td>
-                <button class="pay-btn"
-                    data-index="${index}"
-                    data-status="${status}"
-                    style="${status === 'Paid' ? 'background:green;color:white;' : ''}">
-                    ${status === "Paid" ? "Paid" : "Mark Paid"}
+                <button class="paid-btn"
+                    onclick="markPaid('${m._id}', '${status}')">
+                    ${status === "Active" ? "Active" : "Mark Paid"}
                 </button>
 
-                <button onclick="deleteMember(${index})" style="background:red;color:white;margin-left:5px;">
+                <button class="delete-btn" onclick="deleteMember('${m._id}')">
                     Delete
                 </button>
             </td>
@@ -98,72 +101,50 @@ function renderMembers(data) {
 }
 
 
-/* ================= CLICK HANDLER (PAY BUTTON) ================= */
-document.addEventListener("click", function(e) {
-    if (e.target.classList.contains("pay-btn")) {
+/* ================= MARK PAID ================= */
+function markPaid(id, currentStatus) {
 
-        const btn = e.target;
-        const index = btn.getAttribute("data-index");
-        const currentStatus = btn.getAttribute("data-status");
+    const newStatus = currentStatus === "Active" ? "Pending" : "Active";
 
-        const newStatus = currentStatus === "Paid" ? "Pending" : "Paid";
-
-        // UI change instantly
-        if (newStatus === "Paid") {
-            btn.innerText = "Paid";
-            btn.style.background = "green";
-            btn.style.color = "white";
-            revenue += 500;
-        } else {
-            btn.innerText = "Mark Paid";
-            btn.style.background = "";
-            btn.style.color = "";
-            revenue -= 500;
-        }
-
-        btn.setAttribute("data-status", newStatus);
-        document.getElementById("revenue").innerText = revenue;
-
-        // backend update
-        fetch(`https://backend-4-v4ii.onrender.com/api/memberships/${index}`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                email,
-                password
-            },
-            body: JSON.stringify({ status: newStatus })
-        });
-    }
-});
+    fetch(`https://backend-4-v4ii.onrender.com/api/memberships/${id}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            email,
+            password
+        },
+        body: JSON.stringify({ status: newStatus })
+    })
+    .then(res => res.json())
+    .then(() => {
+        loadMembers(); // reload from backend (REAL FIX)
+    })
+    .catch(() => alert("Update failed ❌"));
+}
 
 
 /* ================= DELETE BOOKING ================= */
-function deleteBooking(index) {
+function deleteBooking(id) {
     if (!confirm("Delete this booking?")) return;
 
-    fetch(`https://backend-4-v4ii.onrender.com/api/bookings/${index}`, {
+    fetch(`https://backend-4-v4ii.onrender.com/api/bookings/${id}`, {
         method: "DELETE",
         headers: { email, password }
     })
-    .then(() => {
-        loadBookings();
-    })
+    .then(() => loadBookings())
     .catch(() => alert("Delete failed ❌"));
 }
 
 
 /* ================= DELETE MEMBER ================= */
-function deleteMember(index) {
+function deleteMember(id) {
     if (!confirm("Delete this member?")) return;
 
-    fetch(`https://backend-4-v4ii.onrender.com/api/memberships/${index}`, {
+    fetch(`https://backend-4-v4ii.onrender.com/api/memberships/${id}`, {
         method: "DELETE",
         headers: { email, password }
     })
-    .then(() => {
-        loadMembers();
-    })
+    .then(() => loadMembers())
     .catch(() => alert("Delete failed ❌"));
 }
 
