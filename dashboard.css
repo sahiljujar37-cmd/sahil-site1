@@ -31,6 +31,8 @@ h1 {
     width: 100%;
     padding: 10px;
     margin-bottom: 20px;
+    border-radius: 5px;
+    border: none;
 }
 
 /* Table */
@@ -39,24 +41,60 @@ table {
     margin-bottom: 30px;
     border-collapse: collapse;
     background: #0f172a;
+    border-radius: 8px;
+    overflow: hidden;
 }
 
 th, td {
-    padding: 10px;
+    padding: 12px;
     text-align: center;
 }
 
 th {
     background: #0ea5e9;
+    color: white;
+}
+
+/* ✅ Fix row separation (removes blue line issue) */
+tr {
+    border-bottom: 1px solid #1e293b;
+}
+
+tr:last-child {
+    border-bottom: none;
 }
 
 /* Buttons */
 button {
-    padding: 8px;
+    padding: 6px 10px;
     border: none;
     cursor: pointer;
+    border-radius: 4px;
+    color: white;
 }
 
+/* 🔴 Delete button */
+.delete-btn {
+    background: red;
+}
+
+/* 🟢 Mark Paid button */
+.paid-btn {
+    background: green;
+}
+
+/* Hover */
 button:hover {
     opacity: 0.8;
+}
+
+/* Status colors */
+.status-active {
+    color: #22c55e;
+    font-weight: bold;
+}
+
+.status-pending {
+    color: #facc15;
+    font-weight: bold;
 }
