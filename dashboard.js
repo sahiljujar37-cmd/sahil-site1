@@ -1,62 +1,82 @@
-const email = localStorage.getItem("adminEmail");
-const password = localStorage.getItem("adminPassword");
-
-if (!email || !password) {
-    window.location.href = "admin.html";
-}
+import { db } from "./firebase.js";
+import {
+    collection,
+    getDocs,
+    updateDoc,
+    deleteDoc,
+    doc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 let membersData = [];
 let bookingsData = [];
 
-/* ================= BOOKINGS ================= */
-function loadBookings() {
-    fetch("https://backend-4-v4ii.onrender.com/api/bookings", {
-        headers: { email, password }
-    })
-    .then(res => res.json())
-    .then(data => {
-        bookingsData = data.data || [];
-
-        document.getElementById("totalBookings").innerText = bookingsData.length;
-
-        const table = document.getElementById("bookingTable");
-        table.innerHTML = "";
-
-        bookingsData.forEach((b) => {
-            table.innerHTML += `
-            <tr>
-                <td>${b.name}</td>
-                <td>${b.email}</td>
-                <td>${b.phone}</td>
-                <td>${b.service}</td>
-                <td>${b.date}</td>
-                <td>
-                    <button class="delete-btn" onclick="deleteBooking('${b._id}')">
-                        Delete
-                    </button>
-                </td>
-            </tr>`;
-        });
-    })
-    .catch(() => alert("Failed to load bookings ❌"));
+/* ================= LOADER ================= */
+function showLoader() {
+    document.getElementById("loader").style.display = "flex";
+}
+function hideLoader() {
+    document.getElementById("loader").style.display = "none";
 }
 
+/* ================= POPUP ================= */
+function showPopup(msg, type="success") {
+    const popup = document.getElementById("popup");
+    popup.innerText = msg;
+    popup.style.display = "block";
+    popup.style.background = type === "error" ? "red" : "#22c55e";
 
-/* ================= MEMBERS ================= */
-function loadMembers() {
-    fetch("https://backend-4-v4ii.onrender.com/api/memberships", {
-        headers: { email, password }
-    })
-    .then(res => res.json())
-    .then(data => {
-        membersData = data.data || [];
-
-        renderMembers(membersData);
-        updateStats();
-    })
-    .catch(() => alert("Failed to load members ❌"));
+    setTimeout(() => popup.style.display = "none", 3000);
 }
 
+/* ================= LOAD MEMBERS ================= */
+async function loadMembers() {
+    showLoader();
+
+    const querySnapshot = await getDocs(collection(db, "memberships"));
+
+    membersData = [];
+    querySnapshot.forEach(docSnap => {
+        membersData.push({ id: docSnap.id, ...docSnap.data() });
+    });
+
+    renderMembers(membersData);
+    updateStats();
+
+    hideLoader();
+}
+
+/* ================= LOAD BOOKINGS ================= */
+async function loadBookings() {
+    showLoader();
+
+    const querySnapshot = await getDocs(collection(db, "bookings"));
+
+    bookingsData = [];
+    querySnapshot.forEach(docSnap => {
+        bookingsData.push({ id: docSnap.id, ...docSnap.data() });
+    });
+
+    document.getElementById("totalBookings").innerText = bookingsData.length;
+
+    const table = document.getElementById("bookingTable");
+    table.innerHTML = "";
+
+    bookingsData.forEach(b => {
+        table.innerHTML += `
+        <tr>
+            <td>${b.name}</td>
+            <td>${b.email}</td>
+            <td>${b.phone}</td>
+            <td>${b.service}</td>
+            <td>${b.date}</td>
+            <td>
+                <button class="delete-btn" onclick="deleteBooking('${b.id}')">Delete</button>
+            </td>
+        </tr>`;
+    });
+
+    hideLoader();
+}
 
 /* ================= UPDATE STATS ================= */
 function updateStats() {
@@ -65,17 +85,15 @@ function updateStats() {
     const active = membersData.filter(m => m.status === "Active").length;
     document.getElementById("activeMembers").innerText = active;
 
-    const revenue = active * 500;
-    document.getElementById("revenue").innerText = revenue;
+    document.getElementById("revenue").innerText = active * 500;
 }
 
-
-/* ================= RENDER MEMBERS ================= */
+/* ================= RENDER ================= */
 function renderMembers(data) {
     const table = document.getElementById("membershipTable");
     table.innerHTML = "";
 
-    data.forEach((m) => {
+    data.forEach(m => {
         const status = m.status || "Pending";
 
         table.innerHTML += `
@@ -89,13 +107,11 @@ function renderMembers(data) {
                 ${status}
             </td>
             <td>
-                <button class="paid-btn"
-                    onclick="toggleStatus('${m._id}')">
+                <button class="paid-btn" onclick="toggleStatus('${m.id}')">
                     ${status === "Active" ? "Make Unpaid" : "Mark Paid"}
                 </button>
 
-                <button class="delete-btn"
-                    onclick="deleteMember('${m._id}')">
+                <button class="delete-btn" onclick="deleteMember('${m.id}')">
                     Delete
                 </button>
             </td>
@@ -103,78 +119,32 @@ function renderMembers(data) {
     });
 }
 
-/* ================= TOGGLE STATUS ================= */
-function toggleStatus(id) {
-
-    // find latest member data (IMPORTANT FIX)
-    const member = membersData.find(m => m._id === id);
-
-    if (!member) return;
-
+/* ================= TOGGLE ================= */
+async function toggleStatus(id) {
+    const member = membersData.find(m => m.id === id);
     const newStatus = member.status === "Active" ? "Pending" : "Active";
 
-    fetch(`https://backend-4-v4ii.onrender.com/api/memberships/${id}`, {
-        method: "PUT",
-        headers: {
-            "Content-Type": "application/json",
-            email,
-            password
-        },
-        body: JSON.stringify({ status: newStatus })
-    })
-    .then(res => res.json())
-    .then(() => {
-        loadMembers(); // reload fresh data
-    })
-    .catch(() => alert("Update failed ❌"));
+    await updateDoc(doc(db, "memberships", id), {
+        status: newStatus
+    });
+
+    showPopup("Status updated ✅");
+    loadMembers();
 }
 
-/* ================= DELETE BOOKING ================= */
-function deleteBooking(id) {
-    if (!confirm("Delete this booking?")) return;
-
-    fetch(`https://backend-4-v4ii.onrender.com/api/bookings/${id}`, {
-        method: "DELETE",
-        headers: { email, password }
-    })
-    .then(() => loadBookings())
-    .catch(() => alert("Delete failed ❌"));
+/* ================= DELETE ================= */
+async function deleteMember(id) {
+    await deleteDoc(doc(db, "memberships", id));
+    showPopup("Member deleted ✅");
+    loadMembers();
 }
 
-
-/* ================= DELETE MEMBER ================= */
-function deleteMember(id) {
-    if (!confirm("Delete this member?")) return;
-
-    fetch(`https://backend-4-v4ii.onrender.com/api/memberships/${id}`, {
-        method: "DELETE",
-        headers: { email, password }
-    })
-    .then(() => loadMembers())
-    .catch(() => alert("Delete failed ❌"));
+async function deleteBooking(id) {
+    await deleteDoc(doc(db, "bookings", id));
+    showPopup("Booking deleted ✅");
+    loadBookings();
 }
-
-
-/* ================= SEARCH ================= */
-function searchMember() {
-    const value = document.getElementById("search").value.toLowerCase();
-
-    const filtered = membersData.filter(m =>
-        (m.name && m.name.toLowerCase().includes(value)) ||
-        (m.phone && m.phone.includes(value))
-    );
-
-    renderMembers(filtered);
-}
-
-
-/* ================= LOGOUT ================= */
-function logout() {
-    localStorage.clear();
-    window.location.href = "admin.html";
-}
-
 
 /* ================= INIT ================= */
-loadBookings();
 loadMembers();
+loadBookings();
