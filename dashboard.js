@@ -70,7 +70,9 @@ async function loadBookings() {
             <td>${b.service}</td>
             <td>${b.date}</td>
             <td>
-                <button class="delete-btn" onclick="deleteBooking('${b.id}')">Delete</button>
+                <button class="delete-btn" onclick="deleteBooking('${b.id}')">
+                    Delete
+                </button>
             </td>
         </tr>`;
     });
@@ -88,7 +90,7 @@ function updateStats() {
     document.getElementById("revenue").innerText = active * 500;
 }
 
-/* ================= RENDER ================= */
+/* ================= RENDER MEMBERS ================= */
 function renderMembers(data) {
     const table = document.getElementById("membershipTable");
     table.innerHTML = "";
@@ -119,9 +121,11 @@ function renderMembers(data) {
     });
 }
 
-/* ================= TOGGLE ================= */
+/* ================= TOGGLE STATUS ================= */
 async function toggleStatus(id) {
     const member = membersData.find(m => m.id === id);
+    if (!member) return;
+
     const newStatus = member.status === "Active" ? "Pending" : "Active";
 
     await updateDoc(doc(db, "memberships", id), {
@@ -143,6 +147,24 @@ async function deleteBooking(id) {
     await deleteDoc(doc(db, "bookings", id));
     showPopup("Booking deleted ✅");
     loadBookings();
+}
+
+/* ================= SEARCH ================= */
+function searchMember() {
+    const value = document.getElementById("search").value.toLowerCase();
+
+    const filtered = membersData.filter(m =>
+        (m.name && m.name.toLowerCase().includes(value)) ||
+        (m.phone && m.phone.includes(value))
+    );
+
+    renderMembers(filtered);
+}
+
+/* ================= LOGOUT ================= */
+function logout() {
+    localStorage.clear();
+    window.location.href = "admin.html";
 }
 
 /* ================= INIT ================= */
