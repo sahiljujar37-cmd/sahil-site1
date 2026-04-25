@@ -9,24 +9,44 @@
 
 <body>
 
-<h1>🏋️ Admin Dashboard</h1>
+<!-- 🔄 LOADER -->
+<div id="loader" class="loader">Loading...</div>
 
-<button onclick="logout()">Logout</button>
+<!-- ✅ POPUP -->
+<div id="popup" class="popup"></div>
+
+<!-- 🔷 HEADER -->
+<div class="header">
+    <h1>🏋️ Admin Dashboard</h1>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+</div>
 
 <!-- 🔥 STATS -->
 <div class="stats">
-    <div class="card">Total Members: <span id="totalMembers">0</span></div>
-    <div class="card">Active: <span id="activeMembers">0</span></div>
-    <div class="card">Bookings: <span id="totalBookings">0</span></div>
-    <div class="card">Revenue: ₹<span id="revenue">0</span></div>
+    <div class="card">
+        <h3>Total Members</h3>
+        <span id="totalMembers">0</span>
+    </div>
+    <div class="card">
+        <h3>Active Members</h3>
+        <span id="activeMembers">0</span>
+    </div>
+    <div class="card">
+        <h3>Bookings</h3>
+        <span id="totalBookings">0</span>
+    </div>
+    <div class="card">
+        <h3>Revenue</h3>
+        ₹<span id="revenue">0</span>
+    </div>
 </div>
 
 <!-- 🔍 SEARCH -->
-<input type="text" id="search" placeholder="Search member..." onkeyup="searchMember()">
+<input type="text" id="search" placeholder="🔍 Search member..." onkeyup="searchMember()">
 
 <!-- ================= BOOKINGS ================= -->
 <h2>Bookings</h2>
-<table class="table">
+<table>
 <thead>
 <tr>
 <th>Name</th>
@@ -34,7 +54,7 @@
 <th>Phone</th>
 <th>Service</th>
 <th>Date</th>
-<th>Action</th> <!-- ✅ added -->
+<th>Action</th>
 </tr>
 </thead>
 <tbody id="bookingTable"></tbody>
@@ -42,7 +62,7 @@
 
 <!-- ================= MEMBERSHIPS ================= -->
 <h2>Memberships</h2>
-<table class="table">
+<table>
 <thead>
 <tr>
 <th>Name</th>
