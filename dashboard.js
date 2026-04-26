@@ -1,75 +1,85 @@
-// ================= IMPORT =================
-import { db } from "./firebase.js";
-import {
-    collection,
-    onSnapshot,
-    deleteDoc,
-    doc,
-    updateDoc
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-let membersData = [];
-
-// ================= REALTIME MEMBERS =================
-function loadMembers() {
-    onSnapshot(collection(db, "memberships"), snapshot => {
-        membersData = [];
-
-        snapshot.forEach(docSnap => {
-            membersData.push({ id: docSnap.id, ...docSnap.data() });
-        });
-
-        renderMembers(membersData);
-        updateStats();
-    });
-}
+// ================= LOAD DATA =================
+let members = JSON.parse(localStorage.getItem("memberships")) || [];
 
 // ================= RENDER =================
-function renderMembers(data) {
+function renderMembers() {
     const table = document.getElementById("membershipTable");
     table.innerHTML = "";
 
-    data.forEach(m => {
-        const status = m.status || "Pending";
-
+    members.forEach(m => {
         table.innerHTML += `
         <tr>
-            <td>${m.name || "-"}</td>
-            <td>${m.email || "-"}</td>
-            <td>${m.phone || "-"}</td>
-            <td>${m.plan || "-"}</td>
-            <td>${m.startDate || "-"}</td>
-            <td>${status}</td>
+            <td>${m.name}</td>
+            <td>${m.email}</td>
+            <td>${m.phone}</td>
+            <td>${m.plan}</td>
+            <td>${m.startDate}</td>
+            <td>${m.status}</td>
             <td>
-                <button onclick="toggleStatus('${m.id}')">
-                    ${status === "Active" ? "Unpaid" : "Paid"}
+                <button onclick="toggleStatus(${m.id})">
+                    ${m.status === "Active" ? "Unpaid" : "Paid"}
                 </button>
-                <button onclick="deleteMember('${m.id}')">Delete</button>
+                <button onclick="deleteMember(${m.id})">Delete</button>
             </td>
         </tr>`;
     });
+
+    updateStats();
 }
 
 // ================= STATS =================
 function updateStats() {
-    document.getElementById("totalMembers").innerText = membersData.length;
+    document.getElementById("totalMembers").innerText = members.length;
 
-    const active = membersData.filter(m => m.status === "Active").length;
+    const active = members.filter(m => m.status === "Active").length;
     document.getElementById("activeMembers").innerText = active;
     document.getElementById("revenue").innerText = active * 500;
 }
 
-// ================= ACTIONS =================
-window.toggleStatus = async function (id) {
-    const member = membersData.find(m => m.id === id);
-
-    await updateDoc(doc(db, "memberships", id), {
-        status: member.status === "Active" ? "Pending" : "Active"
+// ================= TOGGLE STATUS =================
+window.toggleStatus = function (id) {
+    members = members.map(m => {
+        if (m.id === id) {
+            m.status = m.status === "Active" ? "Pending" : "Active";
+        }
+        return m;
     });
+
+    localStorage.setItem("memberships", JSON.stringify(members));
+    renderMembers();
 };
 
-window.deleteMember = async function (id) {
-    await deleteDoc(doc(db, "memberships", id));
+// ================= DELETE =================
+window.deleteMember = function (id) {
+    members = members.filter(m => m.id !== id);
+
+    localStorage.setItem("memberships", JSON.stringify(members));
+    renderMembers();
+};
+
+// ================= SEARCH =================
+window.searchMember = function () {
+    const value = document.getElementById("search").value.toLowerCase();
+
+    const filtered = members.filter(m =>
+        m.name.toLowerCase().includes(value) ||
+        m.phone.includes(value)
+    );
+
+    const table = document.getElementById("membershipTable");
+    table.innerHTML = "";
+
+    filtered.forEach(m => {
+        table.innerHTML += `
+        <tr>
+            <td>${m.name}</td>
+            <td>${m.email}</td>
+            <td>${m.phone}</td>
+            <td>${m.plan}</td>
+            <td>${m.startDate}</td>
+            <td>${m.status}</td>
+        </tr>`;
+    });
 };
 
 // ================= LOGOUT =================
@@ -79,4 +89,4 @@ window.logout = function () {
 };
 
 // ================= INIT =================
-loadMembers();
+renderMembers();
