@@ -327,3 +327,53 @@ table {
         display: inline-block;
     }
 }
+
+
+/* ===== MOBILE DASHBOARD FIX ===== */
+
+@media (max-width: 600px) {
+    /* 1. Remove the margin that pushes content to the right */
+    .main { 
+        margin-left: 0 !important; 
+        width: 100% !important;
+        padding: 0;
+    }
+
+    /* 2. Hide the sidebar by default (it takes up too much space) */
+    .sidebar { 
+        display: none; 
+    }
+
+    /* 3. Adjust the content padding so it doesn't touch the edges */
+    .content {
+        padding: 10px;
+    }
+
+    /* 4. FORCE the Booking Table to be scrollable */
+    #bookingTableWrap, 
+    #memberTableWrap, 
+    #pendingTableWrap, 
+    #activeTableWrap {
+        display: block;
+        width: 100%;
+        overflow-x: auto; /* Enable horizontal swipe */
+        white-space: nowrap; /* Prevent text from wrapping weirdly */
+        border: 1px solid rgba(56, 189, 248, 0.2);
+    }
+
+    /* 5. Ensure the table inside has a minimum width to be readable */
+    table {
+        min-width: 500px; 
+    }
+
+    /* 6. Stack the Stats Cards so they don't get tiny */
+    .stats-grid {
+        grid-template-columns: 1fr !important;
+        gap: 10px;
+    }
+
+    /* 7. Make the Topbar title smaller */
+    .topbar h1 {
+        font-size: 14px;
+    }
+}
