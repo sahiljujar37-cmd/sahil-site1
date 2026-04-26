@@ -1,51 +1,60 @@
+// ================= IMPORT =================
 import { db } from "./firebase.js";
 import {
     collection,
     getDocs,
     updateDoc,
     deleteDoc,
-    doc
+    doc,
+    addDoc,
+    onSnapshot
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+// ================= GLOBAL DATA =================
 let membersData = [];
 let bookingsData = [];
 
-/* ================= LOADER ================= */
+// ================= LOADER =================
 function showLoader() {
-    document.getElementById("loader").style.display = "flex";
-}
-function hideLoader() {
-    document.getElementById("loader").style.display = "none";
+    const loader = document.getElementById("loader");
+    if (loader) loader.style.display = "flex";
 }
 
-/* ================= POPUP ================= */
-function showPopup(msg, type="success") {
+function hideLoader() {
+    const loader = document.getElementById("loader");
+    if (loader) loader.style.display = "none";
+}
+
+// ================= POPUP =================
+function showPopup(msg, type = "success") {
     const popup = document.getElementById("popup");
+    if (!popup) return;
+
     popup.innerText = msg;
     popup.style.display = "block";
     popup.style.background = type === "error" ? "red" : "#22c55e";
 
-    setTimeout(() => popup.style.display = "none", 3000);
+    setTimeout(() => (popup.style.display = "none"), 3000);
 }
 
-/* ================= LOAD MEMBERS ================= */
-async function loadMembers() {
+// ================= REALTIME MEMBERS =================
+function listenMembers() {
     showLoader();
 
-    const querySnapshot = await getDocs(collection(db, "memberships"));
+    onSnapshot(collection(db, "memberships"), snapshot => {
+        membersData = [];
 
-    membersData = [];
-    querySnapshot.forEach(docSnap => {
-        membersData.push({ id: docSnap.id, ...docSnap.data() });
+        snapshot.forEach(docSnap => {
+            membersData.push({ id: docSnap.id, ...docSnap.data() });
+        });
+
+        renderMembers(membersData);
+        updateStats();
+        hideLoader();
     });
-
-    renderMembers(membersData);
-    updateStats();
-
-    hideLoader();
 }
 
-/* ================= LOAD BOOKINGS ================= */
+// ================= LOAD BOOKINGS =================
 async function loadBookings() {
     showLoader();
 
@@ -56,19 +65,22 @@ async function loadBookings() {
         bookingsData.push({ id: docSnap.id, ...docSnap.data() });
     });
 
-    document.getElementById("totalBookings").innerText = bookingsData.length;
+    const total = document.getElementById("totalBookings");
+    if (total) total.innerText = bookingsData.length;
 
     const table = document.getElementById("bookingTable");
+    if (!table) return;
+
     table.innerHTML = "";
 
     bookingsData.forEach(b => {
         table.innerHTML += `
         <tr>
-            <td>${b.name}</td>
-            <td>${b.email}</td>
-            <td>${b.phone}</td>
-            <td>${b.service}</td>
-            <td>${b.date}</td>
+            <td>${b.name || "-"}</td>
+            <td>${b.email || "-"}</td>
+            <td>${b.phone || "-"}</td>
+            <td>${b.service || "-"}</td>
+            <td>${b.date || "-"}</td>
             <td>
                 <button class="delete-btn" onclick="deleteBooking('${b.id}')">
                     Delete
@@ -80,19 +92,25 @@ async function loadBookings() {
     hideLoader();
 }
 
-/* ================= UPDATE STATS ================= */
+// ================= UPDATE STATS =================
 function updateStats() {
-    document.getElementById("totalMembers").innerText = membersData.length;
+    const total = document.getElementById("totalMembers");
+    const activeEl = document.getElementById("activeMembers");
+    const revenueEl = document.getElementById("revenue");
+
+    if (total) total.innerText = membersData.length;
 
     const active = membersData.filter(m => m.status === "Active").length;
-    document.getElementById("activeMembers").innerText = active;
 
-    document.getElementById("revenue").innerText = active * 500;
+    if (activeEl) activeEl.innerText = active;
+    if (revenueEl) revenueEl.innerText = active * 500;
 }
 
-/* ================= RENDER MEMBERS ================= */
+// ================= RENDER MEMBERS =================
 function renderMembers(data) {
     const table = document.getElementById("membershipTable");
+    if (!table) return;
+
     table.innerHTML = "";
 
     data.forEach(m => {
@@ -100,11 +118,11 @@ function renderMembers(data) {
 
         table.innerHTML += `
         <tr>
-            <td>${m.name}</td>
-            <td>${m.email}</td>
-            <td>${m.phone}</td>
-            <td>${m.plan}</td>
-            <td>${m.startDate}</td>
+            <td>${m.name || "-"}</td>
+            <td>${m.email || "-"}</td>
+            <td>${m.phone || "-"}</td>
+            <td>${m.plan || "-"}</td>
+            <td>${m.startDate || "-"}</td>
             <td class="${status === 'Active' ? 'status-active' : 'status-pending'}">
                 ${status}
             </td>
@@ -121,8 +139,32 @@ function renderMembers(data) {
     });
 }
 
-/* ================= TOGGLE STATUS ================= */
-async function toggleStatus(id) {
+// ================= ADD MEMBER =================
+window.addMember = async function () {
+    const name = document.getElementById("name")?.value;
+    const email = document.getElementById("email")?.value;
+    const phone = document.getElementById("phone")?.value;
+    const plan = document.getElementById("plan")?.value;
+
+    if (!name || !phone) {
+        showPopup("Name & Phone required", "error");
+        return;
+    }
+
+    await addDoc(collection(db, "memberships"), {
+        name,
+        email,
+        phone,
+        plan,
+        startDate: new Date().toISOString().split("T")[0],
+        status: "Pending"
+    });
+
+    showPopup("Member Added ✅");
+};
+
+// ================= TOGGLE STATUS =================
+window.toggleStatus = async function (id) {
     const member = membersData.find(m => m.id === id);
     if (!member) return;
 
@@ -133,24 +175,22 @@ async function toggleStatus(id) {
     });
 
     showPopup("Status updated ✅");
-    loadMembers();
-}
+};
 
-/* ================= DELETE ================= */
-async function deleteMember(id) {
+// ================= DELETE =================
+window.deleteMember = async function (id) {
     await deleteDoc(doc(db, "memberships", id));
     showPopup("Member deleted ✅");
-    loadMembers();
-}
+};
 
-async function deleteBooking(id) {
+window.deleteBooking = async function (id) {
     await deleteDoc(doc(db, "bookings", id));
     showPopup("Booking deleted ✅");
     loadBookings();
-}
+};
 
-/* ================= SEARCH ================= */
-function searchMember() {
+// ================= SEARCH =================
+window.searchMember = function () {
     const value = document.getElementById("search").value.toLowerCase();
 
     const filtered = membersData.filter(m =>
@@ -159,14 +199,14 @@ function searchMember() {
     );
 
     renderMembers(filtered);
-}
+};
 
-/* ================= LOGOUT ================= */
-function logout() {
+// ================= LOGOUT (FIXED) =================
+window.logout = function () {
     localStorage.clear();
     window.location.href = "admin.html";
-}
+};
 
-/* ================= INIT ================= */
-loadMembers();
+// ================= INIT =================
+listenMembers();
 loadBookings();
