@@ -326,7 +326,7 @@
         </div>
     </div>
 <!--reviews-->
-    <div id="successPopup" class="popup-overlay">
+<div id="successPopup" class="popup-overlay">
     <div class="popup-content">
         <div class="check-icon">✓</div>
         <h3>Review Posted!</h3>
@@ -336,29 +336,10 @@
 </div>
 
 <section class="pro-results-section">
-    <div class="review-system-container">
-        <div class="review-form-box">
-            <h3>Post a Review</h3>
-            <form id="clientReviewForm">
-                <input type="text" id="userName" placeholder="Your Name" required>
-                <select id="userRating">
-                    <option value="5">★★★★★</option>
-                    <option value="4">★★★★☆</option>
-                    <option value="3">★★★☆☆</option>
-                </select>
-                <textarea id="userMsg" placeholder="Write your message..." required></textarea>
-                <button type="submit" class="post-btn">Submit Review</button>
-            </form>
-        </div>
-
-        <div class="review-feed-container">
-            <h3>Recent Reviews</h3>
-            <div id="liveFeed" class="feed-scroll">
-                </div>
-        </div>
+    <div class="t-heading">
+        <p>Community Feedback</p>
+        <h2>Member <span>Reviews</span></h2>
     </div>
-</section>
-    <hr class="section-divider">
 
     <div class="review-system-container">
         <div class="review-form-box">
@@ -378,7 +359,8 @@
         <div class="review-feed-container">
             <h3>Member Trust Feed</h3>
             <div id="liveFeed" class="feed-scroll">
-                <div class="feed-card">
+                <div class="feed-card" id="rev-123">
+                    <button class="delete-btn" onclick="deleteReview('rev-123')">Delete</button>
                     <div class="feed-header">
                         <div class="feed-avatar">RS</div>
                         <div>
@@ -392,8 +374,6 @@
         </div>
     </div>
 </section>
-
-    
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
