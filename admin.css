@@ -1,57 +1,100 @@
-body {
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #0f172a, #020617);
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+
+/* 1. Global Reset & Body Centering */
+* { 
+    box-sizing: border-box; 
+    margin: 0; 
+    padding: 0; 
 }
 
-/* Login Box */
-.login-box {
-    background: rgba(15, 23, 42, 0.9);
-    padding: 40px 30px; /* More padding for better look */
-    border-radius: 12px;
-    width: 350px;
-    display: flex; /* Added flex */
-    flex-direction: column; /* Stack items vertically */
-    justify-content: center;
-    box-shadow: 0 0 20px rgba(0, 153, 255, 0.3);
-    border: 1px solid rgba(0, 153, 255, 0.2);
+body {
+    font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+    background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
+    color: white;
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center;     /* Center vertically */
+    height: 100vh;
+    overflow: hidden;
 }
-/* Inputs */
+
+/* 2. Login Box Container */
+.login-box {
+    background: rgba(15, 23, 42, 0.95);
+    padding: 40px;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 380px; /* Standard login width */
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 
+                0 0 20px rgba(14, 165, 233, 0.2);
+    border: 1px solid rgba(56, 189, 248, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+.login-box h2 {
+    margin-bottom: 25px;
+    font-size: 24px;
+    font-weight: 700;
+    color: #38bdf8;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* 3. Input Fields */
 input {
     width: 100%;
-    padding: 10px;
+    padding: 12px 15px;
     margin: 10px 0;
-    border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     background: #020617;
     color: white;
-    border: 1px solid #1e3a8a;
+    border: 1px solid #1e293b;
+    font-size: 14px;
+    transition: all 0.3s ease;
 }
 
 input:focus {
     outline: none;
     border-color: #38bdf8;
-    box-shadow: 0 0 5px #38bdf8;
+    box-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
+    background: #0f172a;
 }
 
-/* Button */
+/* 4. The Centered Login Button */
 button {
-    width: 100%;
-    padding: 10px;
+    width: 160px; /* Fixed width to show it is centered */
+    padding: 12px;
+    margin-top: 20px;
     background: linear-gradient(90deg, #0ea5e9, #2563eb);
     border: none;
     color: white;
-    font-weight: bold;
-    border-radius: 6px;
+    font-weight: 700;
+    font-size: 15px;
+    text-transform: uppercase;
+    border-radius: 30px; /* Rounded pill style */
     cursor: pointer;
-    transition: 0.3s;
+    transition: all 0.3s ease;
+    display: inline-block; /* Works with text-align: center on parent */
 }
 
 button:hover {
     background: linear-gradient(90deg, #38bdf8, #3b82f6);
-    box-shadow: 0 0 10px #38bdf8;
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.6);
+    transform: translateY(-2px);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+/* 5. Mobile Responsiveness */
+@media (max-width: 400px) {
+    .login-box {
+        width: 90%;
+        padding: 30px 20px;
+    }
+    
+    button {
+        width: 100%; /* Go full width on very small screens */
+    }
 }
