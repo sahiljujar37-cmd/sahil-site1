@@ -1,3 +1,9 @@
+// ================= SAFE INIT =================
+document.addEventListener("DOMContentLoaded", function () {
+    renderMembers();
+    renderBookings();
+});
+
 // ================= GET DATA =================
 function getMembers() {
     return JSON.parse(localStorage.getItem("memberships")) || [];
@@ -7,22 +13,24 @@ function getBookings() {
     return JSON.parse(localStorage.getItem("bookings")) || [];
 }
 
-// ================= MEMBERS RENDER =================
+// ================= RENDER MEMBERS =================
 function renderMembers() {
     const members = getMembers();
     const table = document.getElementById("membershipTable");
+
+    if (!table) return; // prevent crash
 
     table.innerHTML = "";
 
     members.forEach(m => {
         table.innerHTML += `
         <tr>
-            <td>${m.name}</td>
-            <td>${m.email}</td>
-            <td>${m.phone}</td>
-            <td>${m.plan}</td>
-            <td>${m.startDate}</td>
-            <td>${m.status}</td>
+            <td>${m.name || "-"}</td>
+            <td>${m.email || "-"}</td>
+            <td>${m.phone || "-"}</td>
+            <td>${m.plan || "-"}</td>
+            <td>${m.startDate || "-"}</td>
+            <td>${m.status || "Pending"}</td>
             <td>
                 <button onclick="toggleStatus(${m.id})">
                     ${m.status === "Active" ? "Mark Pending" : "Mark Active"}
@@ -36,21 +44,23 @@ function renderMembers() {
     updateStats();
 }
 
-// ================= BOOKINGS RENDER =================
+// ================= RENDER BOOKINGS =================
 function renderBookings() {
     const bookings = getBookings();
     const table = document.getElementById("bookingTable");
+
+    if (!table) return;
 
     table.innerHTML = "";
 
     bookings.forEach(b => {
         table.innerHTML += `
         <tr>
-            <td>${b.name}</td>
-            <td>${b.email}</td>
-            <td>${b.phone}</td>
-            <td>${b.service}</td>
-            <td>${b.date}</td>
+            <td>${b.name || "-"}</td>
+            <td>${b.email || "-"}</td>
+            <td>${b.phone || "-"}</td>
+            <td>${b.service || "-"}</td>
+            <td>${b.date || "-"}</td>
             <td>
                 <button onclick="deleteBooking(${b.id})">Delete</button>
             </td>
@@ -58,22 +68,27 @@ function renderBookings() {
         `;
     });
 
-    document.getElementById("totalBookings").innerText = bookings.length;
+    const total = document.getElementById("totalBookings");
+    if (total) total.innerText = bookings.length;
 }
 
 // ================= STATS =================
 function updateStats() {
     const members = getMembers();
 
-    document.getElementById("totalMembers").innerText = members.length;
+    const total = document.getElementById("totalMembers");
+    const active = document.getElementById("activeMembers");
+    const revenue = document.getElementById("revenue");
 
-    const active = members.filter(m => m.status === "Active").length;
-    document.getElementById("activeMembers").innerText = active;
+    if (total) total.innerText = members.length;
 
-    document.getElementById("revenue").innerText = active * 500;
+    const activeCount = members.filter(m => m.status === "Active").length;
+
+    if (active) active.innerText = activeCount;
+    if (revenue) revenue.innerText = activeCount * 500;
 }
 
-// ================= ACTIONS =================
+// ================= TOGGLE STATUS =================
 window.toggleStatus = function (id) {
     let members = getMembers();
 
@@ -88,6 +103,7 @@ window.toggleStatus = function (id) {
     renderMembers();
 };
 
+// ================= DELETE MEMBER =================
 window.deleteMember = function (id) {
     let members = getMembers();
 
@@ -97,6 +113,7 @@ window.deleteMember = function (id) {
     renderMembers();
 };
 
+// ================= DELETE BOOKING =================
 window.deleteBooking = function (id) {
     let bookings = getBookings();
 
@@ -108,15 +125,17 @@ window.deleteBooking = function (id) {
 
 // ================= SEARCH =================
 window.searchMember = function () {
-    const value = document.getElementById("search").value.toLowerCase();
+    const value = document.getElementById("search")?.value.toLowerCase();
     const members = getMembers();
 
     const filtered = members.filter(m =>
-        m.name.toLowerCase().includes(value) ||
-        m.phone.includes(value)
+        (m.name && m.name.toLowerCase().includes(value)) ||
+        (m.phone && m.phone.includes(value))
     );
 
     const table = document.getElementById("membershipTable");
+    if (!table) return;
+
     table.innerHTML = "";
 
     filtered.forEach(m => {
@@ -133,6 +152,8 @@ window.searchMember = function () {
     });
 };
 
-// ================= INIT =================
-renderMembers();
-renderBookings();
+// ================= LOGOUT (FIXED) =================
+window.logout = function () {
+    // simple logout
+    window.location.href = "admin.html";
+};
