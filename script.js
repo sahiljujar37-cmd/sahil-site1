@@ -190,6 +190,46 @@ window.calculateBMI = function () {
 
 
 // ===== TESTIMONIALS CAROUSEL =====
+
+document.getElementById('reviewForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  // 1. Get Form Values
+  const name = document.getElementById('reviewerName').value;
+  const text = document.getElementById('reviewText').value;
+  const ratingValue = document.getElementById('reviewRating').value;
+  const stars = '★'.repeat(ratingValue) + '☆'.repeat(5 - ratingValue);
+  
+  // Create initials for avatar
+  const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+
+  // 2. Create the New Card Element
+  const newCard = document.createElement('div');
+  newCard.className = 't-card';
+  newCard.innerHTML = `
+    <div class="t-quote">"</div>
+    <div class="t-stars">${stars}</div>
+    <p class="t-text">"${text}"</p>
+    <div class="t-author">
+      <div class="t-avatar" style="background:rgba(100,116,139,0.15); color:#64748b">${initials}</div>
+      <div>
+        <div class="t-name">${name}</div>
+        <div class="t-role">Verified Member · Just Now</div>
+      </div>
+    </div>
+  `;
+
+  // 3. Add to the Track (prepend puts it at the beginning)
+  const track = document.getElementById('tTrack');
+  track.prepend(newCard);
+
+  // 4. Reset Form and Alert
+  this.reset();
+  alert("Thank you for your review! It has been added to the wall.");
+  
+  // Optional: If you have a slider function, re-initialize it here
+  // updateSlider(); 
+});
 (function () {
     const track = document.getElementById('tTrack');
     if (!track) return;
