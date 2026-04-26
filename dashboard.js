@@ -1,9 +1,17 @@
-// ================= LOAD DATA =================
-let members = JSON.parse(localStorage.getItem("memberships")) || [];
+// ================= GET DATA =================
+function getMembers() {
+    return JSON.parse(localStorage.getItem("memberships")) || [];
+}
 
-// ================= RENDER =================
+function getBookings() {
+    return JSON.parse(localStorage.getItem("bookings")) || [];
+}
+
+// ================= MEMBERS RENDER =================
 function renderMembers() {
+    const members = getMembers();
     const table = document.getElementById("membershipTable");
+
     table.innerHTML = "";
 
     members.forEach(m => {
@@ -17,27 +25,58 @@ function renderMembers() {
             <td>${m.status}</td>
             <td>
                 <button onclick="toggleStatus(${m.id})">
-                    ${m.status === "Active" ? "Unpaid" : "Paid"}
+                    ${m.status === "Active" ? "Mark Pending" : "Mark Active"}
                 </button>
                 <button onclick="deleteMember(${m.id})">Delete</button>
             </td>
-        </tr>`;
+        </tr>
+        `;
     });
 
     updateStats();
 }
 
+// ================= BOOKINGS RENDER =================
+function renderBookings() {
+    const bookings = getBookings();
+    const table = document.getElementById("bookingTable");
+
+    table.innerHTML = "";
+
+    bookings.forEach(b => {
+        table.innerHTML += `
+        <tr>
+            <td>${b.name}</td>
+            <td>${b.email}</td>
+            <td>${b.phone}</td>
+            <td>${b.service}</td>
+            <td>${b.date}</td>
+            <td>
+                <button onclick="deleteBooking(${b.id})">Delete</button>
+            </td>
+        </tr>
+        `;
+    });
+
+    document.getElementById("totalBookings").innerText = bookings.length;
+}
+
 // ================= STATS =================
 function updateStats() {
+    const members = getMembers();
+
     document.getElementById("totalMembers").innerText = members.length;
 
     const active = members.filter(m => m.status === "Active").length;
     document.getElementById("activeMembers").innerText = active;
+
     document.getElementById("revenue").innerText = active * 500;
 }
 
-// ================= TOGGLE STATUS =================
+// ================= ACTIONS =================
 window.toggleStatus = function (id) {
+    let members = getMembers();
+
     members = members.map(m => {
         if (m.id === id) {
             m.status = m.status === "Active" ? "Pending" : "Active";
@@ -49,17 +88,28 @@ window.toggleStatus = function (id) {
     renderMembers();
 };
 
-// ================= DELETE =================
 window.deleteMember = function (id) {
+    let members = getMembers();
+
     members = members.filter(m => m.id !== id);
 
     localStorage.setItem("memberships", JSON.stringify(members));
     renderMembers();
 };
 
+window.deleteBooking = function (id) {
+    let bookings = getBookings();
+
+    bookings = bookings.filter(b => b.id !== id);
+
+    localStorage.setItem("bookings", JSON.stringify(bookings));
+    renderBookings();
+};
+
 // ================= SEARCH =================
 window.searchMember = function () {
     const value = document.getElementById("search").value.toLowerCase();
+    const members = getMembers();
 
     const filtered = members.filter(m =>
         m.name.toLowerCase().includes(value) ||
@@ -78,15 +128,11 @@ window.searchMember = function () {
             <td>${m.plan}</td>
             <td>${m.startDate}</td>
             <td>${m.status}</td>
-        </tr>`;
+        </tr>
+        `;
     });
-};
-
-// ================= LOGOUT =================
-window.logout = function () {
-    localStorage.clear();
-    window.location.href = "admin.html";
 };
 
 // ================= INIT =================
 renderMembers();
+renderBookings();
