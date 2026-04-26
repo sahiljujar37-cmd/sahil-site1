@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Fitness Club</title>
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+<div class="dash">
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <span>FitAdmin</span>
+      <small>Control Panel</small>
+    </div>
+    <div class="nav-item active" onclick="setNav(this,'overview')">
+      <span class="nav-icon">▣</span> Dashboard
+    </div>
+    <div class="nav-item" onclick="setNav(this,'bookings')">
+      <span class="nav-icon">📅</span> Bookings
+    </div>
+    <div class="nav-item" onclick="setNav(this,'members')">
+      <span class="nav-icon">👥</span> Members
+    </div>
+    <div class="nav-item" onclick="setNav(this,'overview')">
+      <span class="nav-icon">⚙</span> Settings
+    </div>
+    <div class="sidebar-bottom">
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="topbar">
+      <h1 id="pageTitle">Dashboard Overview</h1>
+      <span class="admin-badge" id="adminBadge">Admin</span>
+    </div>
+
+    <div class="content">
+
+      <!-- Stats -->
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-card blue">
+          <div class="stat-label">Total Members</div>
+          <div class="stat-num" id="totalMembers">0</div>
+          <div class="stat-sub up" id="activeMembers">0 active</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-label">Total Bookings</div>
+          <div class="stat-num" id="totalBookings">0</div>
+          <div class="stat-sub up">All time</div>
+        </div>
+        <div class="stat-card amber">
+          <div class="stat-label">Pending Approvals</div>
+          <div class="stat-num" id="pendingCount">0</div>
+          <div class="stat-sub pend">Needs action</div>
+        </div>
+        <div class="stat-card red">
+          <div class="stat-label">Revenue</div>
+          <div class="stat-num" id="totalRevenue">₹0</div>
+          <div class="stat-sub up">From memberships</div>
+        </div>
+      </div>
+
+      <!-- Memberships -->
+      <div class="section" id="membersSection">
+        <div class="section-header">
+          <h2>Memberships</h2>
+          <span class="badge badge-blue" id="memberBadge">0 total</span>
+        </div>
+        <div class="tabs">
+          <div class="tab active" onclick="switchTab(this,'tab-all')">All</div>
+          <div class="tab" onclick="switchTab(this,'tab-pending')">Pending</div>
+          <div class="tab" onclick="switchTab(this,'tab-active')">Active</div>
+        </div>
+        <div id="tab-all" class="tab-pane active"><div id="memberTableWrap"></div></div>
+        <div id="tab-pending" class="tab-pane"><div id="pendingTableWrap"></div></div>
+        <div id="tab-active" class="tab-pane"><div id="activeTableWrap"></div></div>
+      </div>
+
+      <!-- Bookings -->
+      <div class="section" id="bookingsSection">
+        <div class="section-header">
+          <h2>Bookings</h2>
+          <span class="badge badge-green" id="bookingBadge">0 total</span>
+        </div>
+        <div id="bookingTableWrap"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<script src="dashboard.js"></script>
+</body>
+</html>
