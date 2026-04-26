@@ -326,7 +326,38 @@
         </div>
     </div>
 <!--reviews-->
+    <div id="successPopup" class="popup-overlay">
+    <div class="popup-content">
+        <div class="check-icon">✓</div>
+        <h3>Review Posted!</h3>
+        <p>Thank you for sharing your experience with Zunjar Club.</p>
+        <button onclick="closePopup()" class="close-popup-btn">Awesome</button>
+    </div>
+</div>
 
+<section class="pro-results-section">
+    <div class="review-system-container">
+        <div class="review-form-box">
+            <h3>Post a Review</h3>
+            <form id="clientReviewForm">
+                <input type="text" id="userName" placeholder="Your Name" required>
+                <select id="userRating">
+                    <option value="5">★★★★★</option>
+                    <option value="4">★★★★☆</option>
+                    <option value="3">★★★☆☆</option>
+                </select>
+                <textarea id="userMsg" placeholder="Write your message..." required></textarea>
+                <button type="submit" class="post-btn">Submit Review</button>
+            </form>
+        </div>
+
+        <div class="review-feed-container">
+            <h3>Recent Reviews</h3>
+            <div id="liveFeed" class="feed-scroll">
+                </div>
+        </div>
+    </div>
+</section>
     <hr class="section-divider">
 
     <div class="review-system-container">
