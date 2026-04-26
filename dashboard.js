@@ -4,77 +4,84 @@ document.addEventListener("DOMContentLoaded", () => {
     renderBookings();
 });
 
-// ================= STORAGE =================
-function getMembers() {
-    return JSON.parse(localStorage.getItem("memberships")) || [];
-}
+// ================= CONFIG =================
+const BASE_URL = "https://backend-4-v4ii.onrender.com/api";
 
-function getBookings() {
-    return JSON.parse(localStorage.getItem("bookings")) || [];
+function getAuthHeaders() {
+    const email = localStorage.getItem("adminEmail");
+    const password = localStorage.getItem("adminPassword");
+
+    return { email, password };
 }
 
 // ================= MEMBERS =================
-function renderMembers(data = null) {
-    const members = data || getMembers();
-    const table = document.getElementById("membershipTable");
+function renderMembers() {
+    fetch(`${BASE_URL}/members`, {
+        headers: getAuthHeaders()
+    })
+    .then(res => res.json())
+    .then(members => {
+        const table = document.getElementById("membershipTable");
+        if (!table) return;
 
-    if (!table) return;
+        table.innerHTML = "";
 
-    table.innerHTML = "";
+        members.forEach(m => {
+            table.innerHTML += `
+            <tr>
+                <td>${m.name}</td>
+                <td>${m.email}</td>
+                <td>${m.phone}</td>
+                <td>${m.plan}</td>
+                <td>${m.startDate}</td>
+                <td>${m.status}</td>
+                <td>
+                    <button onclick="toggleStatus(${m.id})">
+                        ${m.status === "Active" ? "Pending" : "Active"}
+                    </button>
+                    <button onclick="deleteMember(${m.id})">Delete</button>
+                </td>
+            </tr>`;
+        });
 
-    members.forEach(m => {
-        table.innerHTML += `
-        <tr>
-            <td>${m.name}</td>
-            <td>${m.email}</td>
-            <td>${m.phone}</td>
-            <td>${m.plan}</td>
-            <td>${m.startDate}</td>
-            <td>${m.status}</td>
-            <td>
-                <button onclick="toggleStatus(${m.id})">
-                    ${m.status === "Active" ? "Pending" : "Active"}
-                </button>
-                <button onclick="deleteMember(${m.id})">Delete</button>
-            </td>
-        </tr>
-        `;
-    });
-
-    updateStats();
+        updateStats(members);
+    })
+    .catch(err => console.error("Members Error:", err));
 }
 
 // ================= BOOKINGS =================
 function renderBookings() {
-    const bookings = getBookings();
-    const table = document.getElementById("bookingTable");
+    fetch(`${BASE_URL}/bookings`, {
+        headers: getAuthHeaders()
+    })
+    .then(res => res.json())
+    .then(bookings => {
+        const table = document.getElementById("bookingTable");
+        if (!table) return;
 
-    if (!table) return;
+        table.innerHTML = "";
 
-    table.innerHTML = "";
+        bookings.forEach(b => {
+            table.innerHTML += `
+            <tr>
+                <td>${b.name}</td>
+                <td>${b.email}</td>
+                <td>${b.phone}</td>
+                <td>${b.service}</td>
+                <td>${b.date}</td>
+                <td>
+                    <button onclick="deleteBooking(${b.id})">Delete</button>
+                </td>
+            </tr>`;
+        });
 
-    bookings.forEach(b => {
-        table.innerHTML += `
-        <tr>
-            <td>${b.name}</td>
-            <td>${b.email}</td>
-            <td>${b.phone}</td>
-            <td>${b.service}</td>
-            <td>${b.date}</td>
-            <td>
-                <button onclick="deleteBooking(${b.id})">Delete</button>
-            </td>
-        </tr>
-        `;
-    });
-
-    document.getElementById("totalBookings").innerText = bookings.length;
+        document.getElementById("totalBookings").innerText = bookings.length;
+    })
+    .catch(err => console.error("Bookings Error:", err));
 }
 
 // ================= STATS =================
-function updateStats() {
-    const members = getMembers();
-
+function updateStats(members) {
     document.getElementById("totalMembers").innerText = members.length;
 
     const active = members.filter(m => m.status === "Active").length;
@@ -84,53 +91,81 @@ function updateStats() {
 }
 
 // ================= ACTIONS =================
+
+// Toggle Member Status
 window.toggleStatus = function (id) {
-    let members = getMembers();
-
-    members = members.map(m => {
-        if (m.id === id) {
-            m.status = m.status === "Active" ? "Pending" : "Active";
-        }
-        return m;
-    });
-
-    localStorage.setItem("memberships", JSON.stringify(members));
-    renderMembers();
+    fetch(`${BASE_URL}/members/${id}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            ...getAuthHeaders()
+        },
+        body: JSON.stringify({})
+    })
+    .then(() => renderMembers())
+    .catch(err => console.error("Toggle Error:", err));
 };
 
+// Delete Member
 window.deleteMember = function (id) {
-    let members = getMembers();
-
-    members = members.filter(m => m.id !== id);
-
-    localStorage.setItem("memberships", JSON.stringify(members));
-    renderMembers();
+    fetch(`${BASE_URL}/members/${id}`, {
+        method: "DELETE",
+        headers: getAuthHeaders()
+    })
+    .then(() => renderMembers())
+    .catch(err => console.error("Delete Member Error:", err));
 };
 
+// Delete Booking
 window.deleteBooking = function (id) {
-    let bookings = getBookings();
-
-    bookings = bookings.filter(b => b.id !== id);
-
-    localStorage.setItem("bookings", JSON.stringify(bookings));
-    renderBookings();
+    fetch(`${BASE_URL}/bookings/${id}`, {
+        method: "DELETE",
+        headers: getAuthHeaders()
+    })
+    .then(() => renderBookings())
+    .catch(err => console.error("Delete Booking Error:", err));
 };
 
 // ================= SEARCH =================
 window.searchMember = function () {
     const value = document.getElementById("search").value.toLowerCase();
 
-    const members = getMembers();
+    fetch(`${BASE_URL}/members`, {
+        headers: getAuthHeaders()
+    })
+    .then(res => res.json())
+    .then(members => {
+        const filtered = members.filter(m =>
+            m.name.toLowerCase().includes(value) ||
+            m.phone.includes(value)
+        );
 
-    const filtered = members.filter(m =>
-        m.name.toLowerCase().includes(value) ||
-        m.phone.includes(value)
-    );
+        const table = document.getElementById("membershipTable");
+        table.innerHTML = "";
 
-    renderMembers(filtered);
+        filtered.forEach(m => {
+            table.innerHTML += `
+            <tr>
+                <td>${m.name}</td>
+                <td>${m.email}</td>
+                <td>${m.phone}</td>
+                <td>${m.plan}</td>
+                <td>${m.startDate}</td>
+                <td>${m.status}</td>
+                <td>
+                    <button onclick="toggleStatus(${m.id})">
+                        ${m.status === "Active" ? "Pending" : "Active"}
+                    </button>
+                    <button onclick="deleteMember(${m.id})">Delete</button>
+                </td>
+            </tr>`;
+        });
+    });
 };
 
 // ================= LOGOUT =================
 window.logout = function () {
+    localStorage.removeItem("adminEmail");
+    localStorage.removeItem("adminPassword");
     window.location.href = "admin.html";
 };
