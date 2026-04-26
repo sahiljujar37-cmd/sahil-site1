@@ -1,6 +1,61 @@
-
 // ================= GLOBAL =================
 let selectedPlan = {};
+
+// ================= SUCCESS POPUP =================
+function showSuccessPopup(message) {
+    // Remove existing popup if any
+    const existing = document.getElementById("successPopup");
+    if (existing) existing.remove();
+
+    const popup = document.createElement("div");
+    popup.id = "successPopup";
+    popup.innerHTML = `
+        <div style="
+            position: fixed;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-20px);
+            background: linear-gradient(135deg, #1a7a4a, #22c55e);
+            color: #fff;
+            padding: 18px 36px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(34,197,94,0.35), 0 2px 8px rgba(0,0,0,0.18);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            z-index: 99999;
+            opacity: 0;
+            transition: opacity 0.35s ease, transform 0.35s ease;
+            min-width: 280px;
+            max-width: 90vw;
+        ">
+            <span style="font-size: 26px; line-height: 1;">✅</span>
+            <span>${message}</span>
+        </div>
+    `;
+
+    document.body.appendChild(popup);
+
+    // Animate in
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            const box = popup.firstElementChild;
+            box.style.opacity = "1";
+            box.style.transform = "translateX(-50%) translateY(0)";
+        });
+    });
+
+    // Animate out after 3s
+    setTimeout(() => {
+        const box = popup.firstElementChild;
+        box.style.opacity = "0";
+        box.style.transform = "translateX(-50%) translateY(-20px)";
+        setTimeout(() => popup.remove(), 400);
+    }, 3000);
+}
 
 // ================= NAVBAR MENU =================
 const menuToggle = document.getElementById("menuToggle");
@@ -66,7 +121,7 @@ document.getElementById("membershipForm").addEventListener("submit", function (e
     members.push(newMember);
     localStorage.setItem("memberships", JSON.stringify(members));
 
-    alert("Membership Registered ✅");
+    showSuccessPopup("Membership Registered Successfully!");
 
     document.getElementById("membershipForm").reset();
     closeModal();
@@ -91,7 +146,7 @@ document.getElementById("bookingForm").addEventListener("submit", function (e) {
     bookings.push(newBooking);
     localStorage.setItem("bookings", JSON.stringify(bookings));
 
-    alert("Booking Successful ✅");
+    showSuccessPopup("Booking Confirmed Successfully!");
 
     document.getElementById("bookingForm").reset();
 });
