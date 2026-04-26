@@ -11,19 +11,15 @@ body {
 /* Login Box */
 .login-box {
     background: rgba(15, 23, 42, 0.9);
-    padding: 30px;
+    padding: 40px 30px; /* More padding for better look */
     border-radius: 12px;
-    width: 320px;
-    text-align: center;
+    width: 350px;
+    display: flex; /* Added flex */
+    flex-direction: column; /* Stack items vertically */
+    justify-content: center;
     box-shadow: 0 0 20px rgba(0, 153, 255, 0.3);
     border: 1px solid rgba(0, 153, 255, 0.2);
 }
-
-.login-box h2 {
-    margin-bottom: 20px;
-    color: #38bdf8;
-}
-
 /* Inputs */
 input {
     width: 100%;
