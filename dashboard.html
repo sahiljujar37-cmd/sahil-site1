@@ -5,48 +5,54 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gym Admin Dashboard</title>
 <link rel="stylesheet" href="dashboard.css">
+
+<!-- IMPORTANT: defer fixes loading issues -->
+<script src="dashboard.js" defer></script>
 </head>
 
 <body>
 
-<!-- 🔄 LOADER -->
-<div id="loader" class="loader">Loading...</div>
+<!-- LOADER -->
+<div id="loader" class="loader" style="display:none;">Loading...</div>
 
-<!-- ✅ POPUP -->
-<div id="popup" class="popup"></div>
+<!-- POPUP -->
+<div id="popup" class="popup" style="display:none;"></div>
 
-<!-- 🔷 HEADER -->
+<!-- HEADER -->
 <div class="header">
     <h1>🏋️ Admin Dashboard</h1>
-    <button class="logout-btn" onclick="logout()">Logout</button>
+    <button onclick="logout()">Logout</button>
 </div>
 
-<!-- 🔥 STATS -->
+<!-- STATS -->
 <div class="stats">
     <div class="card">
         <h3>Total Members</h3>
         <span id="totalMembers">0</span>
     </div>
+
     <div class="card">
         <h3>Active Members</h3>
         <span id="activeMembers">0</span>
     </div>
+
     <div class="card">
         <h3>Bookings</h3>
         <span id="totalBookings">0</span>
     </div>
+
     <div class="card">
         <h3>Revenue</h3>
         ₹<span id="revenue">0</span>
     </div>
 </div>
 
-<!-- 🔍 SEARCH -->
-<input type="text" id="search" placeholder="🔍 Search member..." onkeyup="searchMember()">
+<!-- SEARCH -->
+<input type="text" id="search" placeholder="Search member..." onkeyup="searchMember()">
 
-<!-- ================= BOOKINGS ================= -->
+<!-- BOOKINGS TABLE -->
 <h2>Bookings</h2>
-<table>
+<table border="1">
 <thead>
 <tr>
 <th>Name</th>
@@ -60,9 +66,9 @@
 <tbody id="bookingTable"></tbody>
 </table>
 
-<!-- ================= MEMBERSHIPS ================= -->
+<!-- MEMBERS TABLE -->
 <h2>Memberships</h2>
-<table>
+<table border="1">
 <thead>
 <tr>
 <th>Name</th>
@@ -77,6 +83,5 @@
 <tbody id="membershipTable"></tbody>
 </table>
 
-<script src="dashboard.js"></script>
 </body>
 </html>
