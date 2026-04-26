@@ -213,3 +213,33 @@ window.addEventListener("load", () => {
     if (dateInput) dateInput.setAttribute("min", today);
     if (startDate) startDate.setAttribute("min", today);
 });
+
+// ================= REVIEW =================
+document.getElementById('clientReviewForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const name = document.getElementById('userName').value;
+    const rating = document.getElementById('userRating').value;
+    const msg = document.getElementById('userMsg').value;
+    const initial = name.charAt(0).toUpperCase();
+    const stars = '★'.repeat(rating) + '☆'.repeat(5 - rating);
+
+    const newReview = document.createElement('div');
+    newReview.className = 'feed-card';
+    newReview.innerHTML = `
+        <div class="feed-header">
+            <div class="feed-avatar">${initial}</div>
+            <div>
+                <h4>${name}</h4>
+                <div class="feed-stars">${stars}</div>
+            </div>
+        </div>
+        <p>"${msg}"</p>
+    `;
+
+    const feed = document.getElementById('liveFeed');
+    feed.prepend(newReview); // Adds to the top
+
+    this.reset();
+    alert("Review posted successfully!");
+});
