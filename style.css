@@ -823,3 +823,96 @@ input, select, textarea {
         grid-template-columns: 1fr;
     }
 }
+
+
+/* --- COMPLETE MOBILE RESPONSIVE OVERHAUL --- */
+
+@media screen and (max-width: 768px) {
+    /* 1. Navigation Menu Fix */
+    .menu-toggle {
+        display: block; /* Show hamburger button */
+        margin-right: 20px;
+    }
+
+    .nav-links {
+        display: none; /* Hide links by default */
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        flex-direction: column;
+        background: var(--darker-bg);
+        padding: 2rem;
+        gap: 1.5rem;
+        border-bottom: 2px solid var(--primary-color);
+        text-align: center;
+    }
+
+    /* This class will be toggled by JavaScript */
+    .nav-links.active {
+        display: flex;
+    }
+
+    /* 2. Hero Section Scaling */
+    .hero {
+        height: auto;
+        padding: 120px 20px 60px;
+    }
+
+    .hero-content h1 {
+        font-size: 2.5rem; /* Smaller font for phones */
+        line-height: 1.2;
+    }
+
+    /* 3. Force All Grids to 1 Column */
+    .services-grid, 
+    .trainers-grid, 
+    .pricing-grid, 
+    .contact-grid, 
+    .results-grid, 
+    .review-system-container,
+    .footer-content {
+        grid-template-columns: 1fr !important;
+        gap: 1.5rem;
+    }
+
+    /* 4. BMI Calculator Fix */
+    .bmi-calculator {
+        padding: 1.5rem;
+    }
+
+    .bmi-form .form-row {
+        grid-template-columns: 1fr; /* Stack height/weight inputs */
+    }
+
+    /* 5. Transformation Images Scaling */
+    .result-images, .ba-images {
+        flex-direction: column; /* Stack 'Before' and 'After' vertically */
+    }
+
+    .img-box img, .img-container img {
+        height: 250px; /* Prevent images from being too tall on mobile */
+        width: 100%;
+    }
+
+    /* 6. Contact Form & Info Adjustments */
+    .contact-form {
+        padding: 1.5rem;
+    }
+
+    .section-title {
+        font-size: 2rem;
+    }
+}
+
+/* Extra small phones */
+@media screen and (max-width: 480px) {
+    .logo img {
+        height: 45px; /* Smaller logo for tiny screens */
+    }
+    
+    .btn {
+        width: 100%; /* Make buttons full-width */
+        text-align: center;
+    }
+}
