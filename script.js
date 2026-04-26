@@ -215,85 +215,77 @@ window.addEventListener("load", () => {
 });
 
 // ================= REVIEW =================
+// ================= FIXED REVIEW SYSTEM =================
 
-const form = document.getElementById('clientReviewForm');
-const feed = document.getElementById('liveFeed');
-const popup = document.getElementById('successPopup');
+// Select elements once at the top
+const reviewForm = document.getElementById('clientReviewForm');
+const reviewFeed = document.getElementById('liveFeed');
+const successPopup = document.getElementById('successPopup');
 
-form.addEventListener('submit', function(e) {
-    e.preventDefault();
+// Single event listener for the form
+if (reviewForm) {
+    reviewForm.addEventListener('submit', function(e) {
+        e.preventDefault();
 
-    const name = document.getElementById('userName').value;
-    const rating = document.getElementById('userRating').value;
-    const msg = document.getElementById('userMsg').value;
-    const stars = '★'.repeat(rating) + '☆'.repeat(5 - rating);
+        // 1. Capture Form Values
+        const name = document.getElementById('userName').value;
+        const rating = document.getElementById('userRating').value;
+        const msg = document.getElementById('userMsg').value;
+        const stars = '★'.repeat(rating) + '☆'.repeat(5 - rating);
+        const initial = name.charAt(0).toUpperCase();
 
-    // Create unique ID for deletion
-    const reviewId = 'rev-' + Date.now();
+        // 2. Create unique ID so the delete button knows which card to remove
+        const reviewId = 'rev-' + Date.now();
 
-    const newReview = document.createElement('div');
-    newReview.className = 'feed-card';
-    newReview.id = reviewId;
-    newReview.innerHTML = `
-        <button class="delete-btn" onclick="deleteReview('${reviewId}')">Delete</button>
-        <div class="feed-header">
-            <div class="feed-avatar">${name.charAt(0).toUpperCase()}</div>
-            <div>
-                <h4>${name}</h4>
-                <div class="feed-stars">${stars}</div>
+        // 3. Create the New Card Element
+        const newReview = document.createElement('div');
+        newReview.className = 'feed-card';
+        newReview.id = reviewId; // Assign the ID here
+        
+        newReview.innerHTML = `
+            <button class="delete-btn" onclick="deleteReview('${reviewId}')">Delete</button>
+            <div class="feed-header">
+                <div class="feed-avatar">${initial}</div>
+                <div>
+                    <h4>${name}</h4>
+                    <div class="feed-stars">${stars}</div>
+                </div>
             </div>
-        </div>
-        <p>"${msg}"</p>
-    `;
+            <p>"${msg}"</p>
+        `;
 
-    // Add to top of sidebar
-    feed.prepend(newReview);
+        // 4. Add to the TOP of the feed
+        reviewFeed.prepend(newReview);
 
-    // Show Success Popup
-    popup.style.display = 'flex';
+        // 5. Show the Professional Success Popup
+        if (successPopup) {
+            successPopup.style.display = 'flex';
+        }
 
-    // Reset form
-    form.reset();
-});
-
-// Function to close popup
-function closePopup() {
-    popup.style.display = 'none';
+        // 6. Reset the form
+        this.reset();
+    });
 }
 
-// Function to delete review
-function deleteReview(id) {
-    if(confirm("Are you sure you want to remove this review?")) {
-        const element = document.getElementById(id);
-        element.style.opacity = '0';
-        setTimeout(() => element.remove(), 300);
+// Function to close the popup
+function closePopup() {
+    if (successPopup) {
+        successPopup.style.display = 'none';
     }
 }
-document.getElementById('clientReviewForm').addEventListener('submit', function(e) {
-    e.preventDefault();
 
-    const name = document.getElementById('userName').value;
-    const rating = document.getElementById('userRating').value;
-    const msg = document.getElementById('userMsg').value;
-    const initial = name.charAt(0).toUpperCase();
-    const stars = '★'.repeat(rating) + '☆'.repeat(5 - rating);
-
-    const newReview = document.createElement('div');
-    newReview.className = 'feed-card';
-    newReview.innerHTML = `
-        <div class="feed-header">
-            <div class="feed-avatar">${initial}</div>
-            <div>
-                <h4>${name}</h4>
-                <div class="feed-stars">${stars}</div>
-            </div>
-        </div>
-        <p>"${msg}"</p>
-    `;
-
-    const feed = document.getElementById('liveFeed');
-    feed.prepend(newReview); // Adds to the top
-
-    this.reset();
-    alert("Review posted successfully!");
-});
+// Function to delete the specific review
+function deleteReview(id) {
+    if (confirm("Are you sure you want to remove this review?")) {
+        const element = document.getElementById(id);
+        if (element) {
+            element.style.opacity = '0';
+            element.style.transform = 'translateX(20px)';
+            element.style.transition = '0.3s ease';
+            
+            setTimeout(() => {
+                element.remove();
+            }, 300);
+        }
+    }
+}
