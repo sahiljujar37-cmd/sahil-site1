@@ -263,11 +263,67 @@ tr:hover td { background: rgba(56,189,248,0.04); }
 }
 
 /* ===== RESPONSIVE ===== */
-@media (max-width: 900px) {
-    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+/* ===== RESPONSIVE OVERHAUL ===== */
+
+/* 1. Fix the Table Overflow (CRITICAL) */
+#memberTableWrap, 
+#pendingTableWrap, 
+#activeTableWrap, 
+#bookingTableWrap {
+    width: 100%;
+    overflow-x: auto; /* Allows swiping left/right on the table */
+    -webkit-overflow-scrolling: touch;
+    background: rgba(15, 23, 42, 0.5);
+    border-radius: 0 0 10px 10px;
 }
+
+table {
+    min-width: 600px; /* Forces the table to keep its shape while scrolling */
+}
+
+@media (max-width: 900px) {
+    .stats-grid { 
+        grid-template-columns: repeat(2, 1fr); 
+    }
+}
+
 @media (max-width: 600px) {
-    .sidebar { display: none; }
-    .main { margin-left: 0; }
-    .stats-grid { grid-template-columns: 1fr 1fr; }
+    /* 2. Fix the Sidebar & Main Content overlap */
+    .sidebar { 
+        transform: translateX(-100%); /* Hide sidebar off-screen */
+        transition: transform 0.3s ease;
+        z-index: 100;
+        width: 200px;
+    }
+
+    /* Use this class to show sidebar via JS if needed */
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .main { 
+        margin-left: 0; 
+        width: 100%;
+    }
+
+    .topbar {
+        padding: 12px 15px;
+    }
+
+    .content {
+        padding: 15px;
+    }
+
+    /* 3. Scale down text and cards */
+    .stat-num { font-size: 22px; }
+    .stat-card { padding: 12px; }
+    
+    .section-header h2 { font-size: 12px; }
+    
+    /* 4. Make action buttons easier to tap */
+    .action-btn {
+        padding: 6px 12px;
+        margin-bottom: 5px;
+        display: inline-block;
+    }
 }
