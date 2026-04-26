@@ -215,6 +215,60 @@ window.addEventListener("load", () => {
 });
 
 // ================= REVIEW =================
+
+const form = document.getElementById('clientReviewForm');
+const feed = document.getElementById('liveFeed');
+const popup = document.getElementById('successPopup');
+
+form.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const name = document.getElementById('userName').value;
+    const rating = document.getElementById('userRating').value;
+    const msg = document.getElementById('userMsg').value;
+    const stars = '★'.repeat(rating) + '☆'.repeat(5 - rating);
+
+    // Create unique ID for deletion
+    const reviewId = 'rev-' + Date.now();
+
+    const newReview = document.createElement('div');
+    newReview.className = 'feed-card';
+    newReview.id = reviewId;
+    newReview.innerHTML = `
+        <button class="delete-btn" onclick="deleteReview('${reviewId}')">Delete</button>
+        <div class="feed-header">
+            <div class="feed-avatar">${name.charAt(0).toUpperCase()}</div>
+            <div>
+                <h4>${name}</h4>
+                <div class="feed-stars">${stars}</div>
+            </div>
+        </div>
+        <p>"${msg}"</p>
+    `;
+
+    // Add to top of sidebar
+    feed.prepend(newReview);
+
+    // Show Success Popup
+    popup.style.display = 'flex';
+
+    // Reset form
+    form.reset();
+});
+
+// Function to close popup
+function closePopup() {
+    popup.style.display = 'none';
+}
+
+// Function to delete review
+function deleteReview(id) {
+    if(confirm("Are you sure you want to remove this review?")) {
+        const element = document.getElementById(id);
+        element.style.opacity = '0';
+        setTimeout(() => element.remove(), 300);
+    }
+}
 document.getElementById('clientReviewForm').addEventListener('submit', function(e) {
     e.preventDefault();
 
