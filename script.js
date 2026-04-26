@@ -188,6 +188,55 @@ window.calculateBMI = function () {
     document.getElementById("bmiResult").style.display = "block";
 };
 
+
+// ===== TESTIMONIALS CAROUSEL =====
+(function () {
+    const track = document.getElementById('tTrack');
+    if (!track) return;
+
+    const cards = track.querySelectorAll('.t-card');
+    const dotsEl = document.getElementById('tDots');
+    const total = cards.length;
+    let current = 0;
+    let autoTimer;
+
+    const visible = () => window.innerWidth < 600 ? 1 : window.innerWidth < 900 ? 2 : 3;
+    const cardWidth = () => cards[0].getBoundingClientRect().width + 24;
+
+    function goTo(idx) {
+        const max = total - visible();
+        current = Math.max(0, Math.min(idx, max));
+        track.style.transform = `translateX(-${current * cardWidth()}px)`;
+        dotsEl.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === current));
+    }
+
+    function buildDots() {
+        dotsEl.innerHTML = '';
+        const max = total - visible();
+        for (let i = 0; i <= max; i++) {
+            const d = document.createElement('div');
+            d.className = 'dot' + (i === 0 ? ' active' : '');
+            d.onclick = () => { goTo(i); resetAuto(); };
+            dotsEl.appendChild(d);
+        }
+    }
+
+    function resetAuto() {
+        clearInterval(autoTimer);
+        autoTimer = setInterval(() => {
+            goTo(current >= total - visible() ? 0 : current + 1);
+        }, 3500);
+    }
+
+    document.getElementById('tNext').onclick = () => { goTo(current + 1); resetAuto(); };
+    document.getElementById('tPrev').onclick = () => { goTo(current - 1); resetAuto(); };
+
+    buildDots();
+    goTo(0);
+    resetAuto();
+    window.addEventListener('resize', () => { buildDots(); goTo(0); });
+})();
+
 // ================= NAVBAR SCROLL EFFECT =================
 window.addEventListener("scroll", () => {
     const navbar = document.querySelector(".navbar");
