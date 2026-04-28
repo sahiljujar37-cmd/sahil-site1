@@ -27,3 +27,13 @@ function login() {
         console.error(err);
     });
 }
+
+// ... inside your .then(data => { ...
+if (data.success) {
+    localStorage.setItem("adminEmail", email);
+    localStorage.setItem("adminPassword", password);
+    localStorage.setItem("isLoggedIn", "true"); // ADD THIS LINE
+
+    window.location.href = "dashboard.html";
+}
+// ...
