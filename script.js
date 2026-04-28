@@ -58,12 +58,22 @@ function showSuccessPopup(message) {
 }
 
 // ================= NAVBAR MENU =================
+// ================= NAVBAR MENU (UPDATED) =================
 const menuToggle = document.getElementById("menuToggle");
 const navLinks = document.getElementById("navLinks");
 
 if (menuToggle && navLinks) {
+    // This part opens/closes the menu when you click the 3 bars
     menuToggle.addEventListener("click", () => {
         navLinks.classList.toggle("active");
+    });
+
+    // NEW CODE: This part closes the menu when any link is clicked
+    const links = navLinks.querySelectorAll("a");
+    links.forEach(link => {
+        link.addEventListener("click", () => {
+            navLinks.classList.remove("active");
+        });
     });
 }
 
