@@ -15,18 +15,34 @@ function logout() {
 
 // ===== SIDEBAR NAV =====
 function setNav(el, section) {
+    // 1. Update Sidebar Active State
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     el.classList.add('active');
 
-    const titles = { overview: 'Dashboard Overview', bookings: 'Bookings', members: 'Members' };
+    // 2. Update Page Title
+    const titles = { 
+        overview: 'Dashboard Overview', 
+        bookings: 'Bookings', 
+        members: 'Members', 
+        reviews: 'Member Reviews' 
+    };
     document.getElementById('pageTitle').textContent = titles[section] || 'Dashboard';
 
-    document.getElementById('membersSection').style.display  = section === 'bookings' ? 'none' : 'block';
-    document.getElementById('bookingsSection').style.display = section === 'members'  ? 'none' : 'block';
-    document.getElementById('statsGrid').style.display       = section === 'overview' ? 'grid' : 'none';
+    // 3. Toggle Visibility of Sections
+    // Overview shows everything, specific tabs show only their section
+    document.getElementById('statsGrid').style.display = section === 'overview' ? 'grid' : 'none';
+    
+    document.getElementById('membersSection').style.display = 
+        (section === 'overview' || section === 'members') ? 'block' : 'none';
+    
+    document.getElementById('bookingsSection').style.display = 
+        (section === 'overview' || section === 'bookings') ? 'block' : 'none';
+        
+    document.getElementById('reviewsSection').style.display = 
+        (section === 'overview' || section === 'reviews') ? 'block' : 'none';
 }
 
-// ===== TABS =====
+// ===== TABS (For Members Section) =====
 function switchTab(el, paneId) {
     el.closest('.tabs').querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     el.classList.add('active');
@@ -34,13 +50,13 @@ function switchTab(el, paneId) {
     document.getElementById(paneId).classList.add('active');
 }
 
-// ===== STATUS BADGE =====
+// ===== STATUS BADGE HELPER =====
 function statusBadge(s) {
     const map = { Active: 'badge-green', Pending: 'badge-amber', Cancelled: 'badge-red', Rejected: 'badge-red' };
     return `<span class="badge ${map[s] || 'badge-blue'}">${s || '—'}</span>`;
 }
 
-// ===== APPROVE MEMBER =====
+// ===== MEMBER ACTIONS =====
 function approveMember(id) {
     let members = JSON.parse(localStorage.getItem('memberships') || '[]');
     members = members.map(m => m.id === id ? { ...m, status: 'Active' } : m);
@@ -48,7 +64,6 @@ function approveMember(id) {
     loadDashboard();
 }
 
-// ===== DELETE MEMBER =====
 function deleteMember(id) {
     if (!confirm('Are you sure you want to delete this member?')) return;
     let members = JSON.parse(localStorage.getItem('memberships') || '[]');
@@ -57,7 +72,7 @@ function deleteMember(id) {
     loadDashboard();
 }
 
-// ===== DELETE BOOKING =====
+// ===== BOOKING ACTIONS =====
 function deleteBooking(id) {
     if (!confirm('Are you sure you want to delete this booking?')) return;
     let bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
@@ -66,7 +81,18 @@ function deleteBooking(id) {
     loadDashboard();
 }
 
-// ===== RENDER MEMBER TABLE =====
+// ===== REVIEW ACTIONS =====
+function deleteReviewFromDashboard(id) {
+    if (confirm("Are you sure you want to delete this review? It will be removed for everyone.")) {
+        let reviews = JSON.parse(localStorage.getItem('memberReviews')) || [];
+        reviews = reviews.filter(rev => rev.id !== id);
+        localStorage.setItem('memberReviews', JSON.stringify(reviews));
+        loadDashboard(); // Refresh the UI
+    }
+}
+
+// ===== RENDER TABLES =====
+
 function renderMemberTable(members, wrapId) {
     const wrap = document.getElementById(wrapId);
     if (!members.length) {
@@ -101,29 +127,65 @@ function renderMemberTable(members, wrapId) {
         </table>`;
 }
 
-// ===== LOAD DASHBOARD =====
+function renderReviewTable(reviews, wrapId) {
+    const wrap = document.getElementById(wrapId);
+    if (!reviews.length) {
+        wrap.innerHTML = '<div class="empty-state">No reviews found</div>';
+        return;
+    }
+    wrap.innerHTML = `
+        <table>
+            <thead>
+                <tr>
+                    <th>Member Name</th><th>Rating</th><th>Message</th><th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${reviews.map(rev => `
+                <tr>
+                    <td><strong>${rev.name}</strong></td>
+                    <td><span style="color: #f59e0b;">${'★'.repeat(rev.rating)}${'☆'.repeat(5 - rev.rating)}</span></td>
+                    <td style="max-width: 300px; white-space: normal;">${rev.msg}</td>
+                    <td>
+                        <button class="action-btn btn-delete" onclick="deleteReviewFromDashboard('${rev.id}')">Delete Review</button>
+                    </td>
+                </tr>`).join('')}
+            </tbody>
+        </table>`;
+}
+
+// ===== MAIN LOAD DASHBOARD =====
 function loadDashboard() {
-    const members  = JSON.parse(localStorage.getItem('memberships') || '[]');
-    const bookings = JSON.parse(localStorage.getItem('bookings')    || '[]');
+    const members = JSON.parse(localStorage.getItem('memberships') || '[]');
+    const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+    const reviews = JSON.parse(localStorage.getItem('memberReviews') || '[]');
 
     document.getElementById('adminBadge').textContent = adminEmail.split('@')[0] || 'Admin';
 
-    const active  = members.filter(m => m.status === 'Active');
+    // Stats Calculation
+    const active = members.filter(m => m.status === 'Active');
     const pending = members.filter(m => m.status !== 'Active');
     const revenue = members.reduce((sum, m) => sum + (parseFloat(m.price) || 0), 0);
 
+    // Update Dashboard UI
     document.getElementById('totalMembers').textContent = members.length;
     document.getElementById('activeMembers').textContent = active.length + ' active';
     document.getElementById('totalBookings').textContent = bookings.length;
-    document.getElementById('pendingCount').textContent  = pending.length;
-    document.getElementById('totalRevenue').textContent  = '₹' + revenue.toLocaleString();
-    document.getElementById('memberBadge').textContent   = members.length + ' total';
-    document.getElementById('bookingBadge').textContent  = bookings.length + ' total';
+    document.getElementById('pendingCount').textContent = pending.length;
+    document.getElementById('totalRevenue').textContent = '₹' + revenue.toLocaleString();
+    
+    // Update Badges
+    if(document.getElementById('memberBadge')) document.getElementById('memberBadge').textContent = members.length + ' total';
+    if(document.getElementById('bookingBadge')) document.getElementById('bookingBadge').textContent = bookings.length + ' total';
+    if(document.getElementById('reviewBadge')) document.getElementById('reviewBadge').textContent = reviews.length + ' total';
 
-    renderMemberTable(members,  'memberTableWrap');
-    renderMemberTable(pending,  'pendingTableWrap');
-    renderMemberTable(active,   'activeTableWrap');
+    // Render Tables
+    renderMemberTable(members, 'memberTableWrap');
+    renderMemberTable(pending, 'pendingTableWrap');
+    renderMemberTable(active, 'activeTableWrap');
+    renderReviewTable(reviews, 'reviewTableWrap');
 
+    // Render Bookings Table
     const bWrap = document.getElementById('bookingTableWrap');
     if (!bookings.length) {
         bWrap.innerHTML = '<div class="empty-state">No bookings yet</div>';
@@ -151,49 +213,8 @@ function loadDashboard() {
             </table>`;
     }
 }
-// Function to load reviews into the dashboard
-function loadAdminReviews() {
-    const reviewFeed = document.getElementById('adminReviewFeed');
-    // Using the same key as your main script.js
-    const reviews = JSON.parse(localStorage.getItem('memberReviews')) || [];
 
-    if (reviews.length === 0) {
-        reviewFeed.innerHTML = "<p>No reviews found.</p>";
-        return;
-    }
-
-    reviewFeed.innerHTML = reviews.map(rev => `
-        <div class="admin-review-card" id="admin-${rev.id}">
-            <div class="card-info">
-                <strong>${rev.name}</strong> (${rev.rating} Stars)
-                <p>${rev.msg}</p>
-            </div>
-            <button class="delete-btn-admin" onclick="deleteReviewFromDashboard('${rev.id}')">
-                Delete Review
-            </button>
-        </div>
-    `).join('');
-}
-
-// Function for the Owner to delete the review
-function deleteReviewFromDashboard(id) {
-    if (confirm("Are you sure you want to delete this review? It will be removed for everyone.")) {
-        // 1. Get all reviews
-        let reviews = JSON.parse(localStorage.getItem('memberReviews')) || [];
-        
-        // 2. Filter out the one you want to delete
-        reviews = reviews.filter(rev => rev.id !== id);
-        
-        // 3. Save the updated list back to localStorage
-        localStorage.setItem('memberReviews', JSON.stringify(reviews));
-        
-        // 4. Update the screen
-        loadAdminReviews();
-        alert("Review Deleted!");
-    }
-}
-
-// Call this when the dashboard loads
-document.addEventListener('DOMContentLoaded', loadAdminReviews);
+// Initial Load
+document.addEventListener('DOMContentLoaded', loadDashboard);
 
 loadDashboard();
