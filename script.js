@@ -286,6 +286,8 @@ function closePopup() {
     }
 }
 
+
+
 // Function to delete the specific review
 function deleteReview(id) {
     if (confirm("Are you sure you want to remove this review?")) {
@@ -301,3 +303,27 @@ function deleteReview(id) {
         }
     }
 }
+
+
+
+reviewForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const newReview = {
+        id: 'rev-' + Date.now(),
+        name: document.getElementById('userName').value,
+        rating: document.getElementById('userRating').value,
+        msg: document.getElementById('userMsg').value
+    };
+
+    // SAVE TO LOCAL STORAGE SO DASHBOARD CAN SEE IT
+    let allReviews = JSON.parse(localStorage.getItem('memberReviews')) || [];
+    allReviews.push(newReview);
+    localStorage.setItem('memberReviews', JSON.stringify(allReviews));
+
+    showSuccessPopup("Review Posted!");
+    this.reset();
+    
+    // (Optional) Call a function to refresh the feed on the main page
+    displayReviewsOnMainPage(); 
+});
