@@ -151,5 +151,49 @@ function loadDashboard() {
             </table>`;
     }
 }
+// Function to load reviews into the dashboard
+function loadAdminReviews() {
+    const reviewFeed = document.getElementById('adminReviewFeed');
+    // Using the same key as your main script.js
+    const reviews = JSON.parse(localStorage.getItem('memberReviews')) || [];
+
+    if (reviews.length === 0) {
+        reviewFeed.innerHTML = "<p>No reviews found.</p>";
+        return;
+    }
+
+    reviewFeed.innerHTML = reviews.map(rev => `
+        <div class="admin-review-card" id="admin-${rev.id}">
+            <div class="card-info">
+                <strong>${rev.name}</strong> (${rev.rating} Stars)
+                <p>${rev.msg}</p>
+            </div>
+            <button class="delete-btn-admin" onclick="deleteReviewFromDashboard('${rev.id}')">
+                Delete Review
+            </button>
+        </div>
+    `).join('');
+}
+
+// Function for the Owner to delete the review
+function deleteReviewFromDashboard(id) {
+    if (confirm("Are you sure you want to delete this review? It will be removed for everyone.")) {
+        // 1. Get all reviews
+        let reviews = JSON.parse(localStorage.getItem('memberReviews')) || [];
+        
+        // 2. Filter out the one you want to delete
+        reviews = reviews.filter(rev => rev.id !== id);
+        
+        // 3. Save the updated list back to localStorage
+        localStorage.setItem('memberReviews', JSON.stringify(reviews));
+        
+        // 4. Update the screen
+        loadAdminReviews();
+        alert("Review Deleted!");
+    }
+}
+
+// Call this when the dashboard loads
+document.addEventListener('DOMContentLoaded', loadAdminReviews);
 
 loadDashboard();
