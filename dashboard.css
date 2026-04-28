@@ -377,3 +377,16 @@ table {
         font-size: 14px;
     }
 }
+/* Reviews Table Styling */
+.review-text-cell {
+    max-width: 250px;
+    white-space: normal;
+    word-wrap: break-word;
+    font-style: italic;
+    color: #94a3b8;
+}
+
+.rating-stars {
+    color: #f59e0b;
+    font-weight: bold;
+}
