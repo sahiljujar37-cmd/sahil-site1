@@ -226,34 +226,31 @@ window.addEventListener("load", () => {
 
 // ================= REVIEW =================
 // ================= FIXED REVIEW SYSTEM =================
-
-// Select elements once at the top
+// ================= FIXED REVIEW SYSTEM =================
 const reviewForm = document.getElementById('clientReviewForm');
 const reviewFeed = document.getElementById('liveFeed');
 const successPopup = document.getElementById('successPopup');
 
-// Single event listener for the form
 if (reviewForm) {
     reviewForm.addEventListener('submit', function(e) {
         e.preventDefault();
 
-        // 1. Capture Form Values
         const name = document.getElementById('userName').value;
         const rating = document.getElementById('userRating').value;
         const msg = document.getElementById('userMsg').value;
         const stars = '★'.repeat(rating) + '☆'.repeat(5 - rating);
         const initial = name.charAt(0).toUpperCase();
-
-        // 2. Create unique ID so the delete button knows which card to remove
         const reviewId = 'rev-' + Date.now();
 
-        // 3. Create the New Card Element
+        // CHECK IF OWNER IS LOGGED IN
+        const isOwner = localStorage.getItem("isLoggedIn") === "true";
+
         const newReview = document.createElement('div');
         newReview.className = 'feed-card';
-        newReview.id = reviewId; // Assign the ID here
+        newReview.id = reviewId;
         
         newReview.innerHTML = `
-            <button class="delete-btn" onclick="deleteReview('${reviewId}')">Delete</button>
+            ${isOwner ? `<button class="delete-btn" onclick="deleteReview('${reviewId}')">Delete</button>` : ''}
             <div class="feed-header">
                 <div class="feed-avatar">${initial}</div>
                 <div>
@@ -264,19 +261,24 @@ if (reviewForm) {
             <p>"${msg}"</p>
         `;
 
-        // 4. Add to the TOP of the feed
         reviewFeed.prepend(newReview);
-
-        // 5. Show the Professional Success Popup
-        if (successPopup) {
-            successPopup.style.display = 'flex';
-        }
-
-        // 6. Reset the form
+        if (successPopup) successPopup.style.display = 'flex';
         this.reset();
     });
 }
 
+// Function to delete review (Ensure this stays)
+function deleteReview(id) {
+    if (confirm("Are you sure you want to remove this review?")) {
+        const element = document.getElementById(id);
+        if (element) {
+            element.style.opacity = '0';
+            element.style.transform = 'translateX(20px)';
+            element.style.transition = '0.3s ease';
+            setTimeout(() => { element.remove(); }, 300);
+        }
+    }
+}
 // Function to close the popup
 function closePopup() {
     if (successPopup) {
