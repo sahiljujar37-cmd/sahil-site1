@@ -1,7 +1,5 @@
 
-Copy
-
-// ===== AUTH GUARD =====
+   // ===== AUTH GUARD =====
 var adminEmail    = localStorage.getItem("adminEmail");
 var adminPassword = localStorage.getItem("adminPassword");
  
