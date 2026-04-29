@@ -1,13 +1,6 @@
-
+ · JS
 Copy
 
-// ================= FIREBASE IMPORTS =================
-import { db } from './firebase.js';
-import {
-    collection, addDoc, getDocs, deleteDoc,
-    doc, query, orderBy, serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
- 
 // ================= GLOBAL =================
 let selectedPlan = {};
  
@@ -20,32 +13,21 @@ function showSuccessPopup(message) {
     popup.id = "successPopup";
     popup.innerHTML = `
         <div style="
-            position: fixed;
-            top: 30px;
-            left: 50%;
+            position: fixed; top: 30px; left: 50%;
             transform: translateX(-50%) translateY(-20px);
             background: linear-gradient(135deg, #1a7a4a, #22c55e);
-            color: #fff;
-            padding: 18px 36px;
-            border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(34,197,94,0.35), 0 2px 8px rgba(0,0,0,0.18);
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 16px;
-            font-weight: 600;
-            z-index: 99999;
-            opacity: 0;
+            color: #fff; padding: 18px 36px; border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(34,197,94,0.35);
+            display: flex; align-items: center; gap: 14px;
+            font-family: 'Segoe UI', sans-serif; font-size: 16px; font-weight: 600;
+            z-index: 99999; opacity: 0;
             transition: opacity 0.35s ease, transform 0.35s ease;
-            min-width: 280px;
-            max-width: 90vw;
-        ">
-            <span style="font-size: 26px; line-height: 1;">✅</span>
+            min-width: 280px; max-width: 90vw;">
+            <span style="font-size:26px;">✅</span>
             <span>${message}</span>
-        </div>
-    `;
+        </div>`;
     document.body.appendChild(popup);
+ 
     requestAnimationFrame(() => {
         requestAnimationFrame(() => {
             const box = popup.firstElementChild;
@@ -53,6 +35,7 @@ function showSuccessPopup(message) {
             box.style.transform = "translateX(-50%) translateY(0)";
         });
     });
+ 
     setTimeout(() => {
         const box = popup.firstElementChild;
         box.style.opacity = "0";
@@ -69,8 +52,7 @@ if (menuToggle && navLinks) {
     menuToggle.addEventListener("click", () => {
         navLinks.classList.toggle("active");
     });
-    const links = navLinks.querySelectorAll("a");
-    links.forEach(link => {
+    navLinks.querySelectorAll("a").forEach(link => {
         link.addEventListener("click", () => {
             navLinks.classList.remove("active");
         });
@@ -98,6 +80,7 @@ window.selectPlan = function (plan, price) {
 window.closeModal = function () {
     document.getElementById("membershipModal").style.display = "none";
 };
+ 
 window.addEventListener("click", (e) => {
     const modal = document.getElementById("membershipModal");
     if (e.target === modal) closeModal();
@@ -151,17 +134,17 @@ window.calculateBMI = function () {
     const h = height / 100;
     const bmi = (weight / (h * h)).toFixed(1);
     let category = "", color = "";
-    if (bmi < 18.5) { category = "Underweight"; color = "orange"; }
-    else if (bmi < 25) { category = "Normal"; color = "green"; }
-    else if (bmi < 30) { category = "Overweight"; color = "orange"; }
-    else { category = "Obese"; color = "red"; }
+    if (bmi < 18.5)    { category = "Underweight"; color = "orange"; }
+    else if (bmi < 25) { category = "Normal";      color = "green";  }
+    else if (bmi < 30) { category = "Overweight";  color = "orange"; }
+    else               { category = "Obese";        color = "red";   }
     document.getElementById("bmiValue").innerText = bmi;
     document.getElementById("bmiCategory").innerText = category;
     document.getElementById("bmiCategory").style.color = color;
     document.getElementById("bmiResult").style.display = "block";
 };
  
-// ================= NAVBAR SCROLL EFFECT =================
+// ================= NAVBAR SCROLL =================
 window.addEventListener("scroll", () => {
     const navbar = document.querySelector(".navbar");
     if (navbar) {
@@ -182,98 +165,89 @@ window.addEventListener("load", () => {
  
  
 // ======================================================
-// ================= REVIEW SYSTEM (FIRESTORE) ==========
+// ================= REVIEW SYSTEM (localStorage) =======
 // ======================================================
  
-const reviewForm = document.getElementById('clientReviewForm');
-const reviewFeed = document.getElementById('liveFeed');
- 
-// ----- Add a review card to the feed -----
-function addReviewCard(firestoreId, name, rating, msg) {
+// Load all saved reviews from localStorage and show them
+function loadReviewsOnPage() {
+    const reviewFeed = document.getElementById('liveFeed');
     if (!reviewFeed) return;
  
-    const stars = '★'.repeat(rating) + '☆'.repeat(5 - rating);
-    const initial = name.charAt(0).toUpperCase();
+    reviewFeed.innerHTML = ''; // Clear hardcoded demo cards
  
-    const card = document.createElement('div');
-    card.className = 'feed-card';
-    card.id = 'rev-' + firestoreId;
-    card.innerHTML = `
-        <div class="feed-header">
-            <div class="feed-avatar">${initial}</div>
-            <div>
-                <h4>${name}</h4>
-                <div class="feed-stars">${stars}</div>
-            </div>
-        </div>
-        <p>"${msg}"</p>
-    `;
-    reviewFeed.prepend(card);
-}
+    const saved = JSON.parse(localStorage.getItem('memberReviews')) || [];
  
-// ----- Load all reviews from Firestore on page load -----
-async function loadReviewsOnPage() {
-    if (!reviewFeed) return;
- 
-    // Clear the hardcoded demo card
-    reviewFeed.innerHTML = '<p style="color:#888; text-align:center; padding:20px;">Loading reviews...</p>';
- 
-    try {
-        const q = query(collection(db, 'reviews'), orderBy('timestamp', 'desc'));
-        const snapshot = await getDocs(q);
- 
-        reviewFeed.innerHTML = ''; // Clear loading text
- 
-        if (snapshot.empty) {
-            reviewFeed.innerHTML = '<p style="color:#888; text-align:center; padding:20px;">No reviews yet. Be the first!</p>';
-            return;
-        }
- 
-        snapshot.forEach(docSnap => {
-            const r = docSnap.data();
-            addReviewCard(docSnap.id, r.name, r.rating, r.msg);
-        });
-    } catch (err) {
-        console.error("Error loading reviews:", err);
-        reviewFeed.innerHTML = '<p style="color:#f87171; text-align:center;">Could not load reviews. Check Firebase config.</p>';
+    if (saved.length === 0) {
+        reviewFeed.innerHTML = '<p style="color:#888;text-align:center;padding:20px;">No reviews yet. Be the first!</p>';
+        return;
     }
-}
  
-// ----- Submit a new review to Firestore -----
-if (reviewForm) {
-    reviewForm.addEventListener('submit', async function (e) {
-        e.preventDefault();
- 
-        const submitBtn = reviewForm.querySelector('.post-btn');
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Posting...';
- 
-        const name   = document.getElementById('userName').value.trim();
-        const rating = parseInt(document.getElementById('userRating').value);
-        const msg    = document.getElementById('userMsg').value.trim();
- 
-        try {
-            const docRef = await addDoc(collection(db, 'reviews'), {
-                name,
-                rating,
-                msg,
-                timestamp: serverTimestamp()
-            });
- 
-            // Add to feed instantly without reloading
-            addReviewCard(docRef.id, name, rating, msg);
-            showSuccessPopup("Review Posted Successfully!");
-            reviewForm.reset();
- 
-        } catch (err) {
-            console.error("Error saving review:", err);
-            alert("Could not post review. Please try again.");
-        } finally {
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Post Review';
-        }
+    // Newest first
+    saved.slice().reverse().forEach(review => {
+        const stars   = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
+        const initial = review.name.charAt(0).toUpperCase();
+        const card = document.createElement('div');
+        card.className = 'feed-card';
+        card.id = review.id;
+        card.innerHTML = `
+            <div class="feed-header">
+                <div class="feed-avatar">${initial}</div>
+                <div>
+                    <h4>${review.name}</h4>
+                    <div class="feed-stars">${stars}</div>
+                </div>
+            </div>
+            <p>"${review.msg}"</p>
+        `;
+        reviewFeed.appendChild(card);
     });
 }
  
-// ----- Load reviews when page is ready -----
+// Submit a new review
+const reviewForm = document.getElementById('clientReviewForm');
+ 
+if (reviewForm) {
+    reviewForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+ 
+        const newReview = {
+            id:     'rev-' + Date.now(),
+            name:   document.getElementById('userName').value.trim(),
+            rating: parseInt(document.getElementById('userRating').value),
+            msg:    document.getElementById('userMsg').value.trim()
+        };
+ 
+        // Save to localStorage so dashboard and page refresh can see it
+        let allReviews = JSON.parse(localStorage.getItem('memberReviews')) || [];
+        allReviews.push(newReview);
+        localStorage.setItem('memberReviews', JSON.stringify(allReviews));
+ 
+        // Instantly add to the feed on screen
+        const reviewFeed = document.getElementById('liveFeed');
+        const emptyMsg = reviewFeed.querySelector('p');
+        if (emptyMsg) emptyMsg.remove();
+ 
+        const stars   = '★'.repeat(newReview.rating) + '☆'.repeat(5 - newReview.rating);
+        const initial = newReview.name.charAt(0).toUpperCase();
+        const card = document.createElement('div');
+        card.className = 'feed-card';
+        card.id = newReview.id;
+        card.innerHTML = `
+            <div class="feed-header">
+                <div class="feed-avatar">${initial}</div>
+                <div>
+                    <h4>${newReview.name}</h4>
+                    <div class="feed-stars">${stars}</div>
+                </div>
+            </div>
+            <p>"${newReview.msg}"</p>
+        `;
+        reviewFeed.prepend(card);
+ 
+        showSuccessPopup("Review Posted Successfully!");
+        reviewForm.reset();
+    });
+}
+ 
+// Run on page load
 document.addEventListener('DOMContentLoaded', loadReviewsOnPage);
