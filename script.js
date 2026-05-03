@@ -1,14 +1,17 @@
-Script · JS
+
 Copy
 
 // ============================================================
-//  FITNESS CLUB - script.js  (works with server.js)
+//  FITNESS CLUB - script.js
+//  Backend: https://backend-4-v4ii.onrender.com
 // ============================================================
+ 
+const API = "https://backend-4-v4ii.onrender.com"; // ✅ Your Render backend
  
 // ── Global ────────────────────────────────────────────────────
 let selectedPlan = {};
  
-// ── SUCCESS POPUP ─────────────────────────────────────────────
+// ── SUCCESS / ERROR POPUP ─────────────────────────────────────
 function showSuccessPopup(message) {
     const existing = document.getElementById("successPopup");
     if (existing) existing.remove();
@@ -122,14 +125,14 @@ window.addEventListener("click", (e) => {
     if (e.target === modal) closeModal();
 });
  
-// ── MEMBERSHIP FORM → POST to server ─────────────────────────
+// ── MEMBERSHIP FORM → Render Backend ─────────────────────────
 const membershipForm = document.getElementById("membershipForm");
 if (membershipForm) {
     membershipForm.addEventListener("submit", async function (e) {
         e.preventDefault();
  
         const submitBtn = this.querySelector("button[type=submit]");
-        submitBtn.disabled = true;
+        submitBtn.disabled    = true;
         submitBtn.textContent = "Submitting...";
  
         const data = {
@@ -142,7 +145,7 @@ if (membershipForm) {
         };
  
         try {
-            const res  = await fetch("/api/membership", {
+            const res  = await fetch(`${API}/api/membership`, {
                 method:  "POST",
                 headers: { "Content-Type": "application/json" },
                 body:    JSON.stringify(data)
@@ -150,15 +153,15 @@ if (membershipForm) {
             const json = await res.json();
  
             if (json.success) {
-                showSuccessPopup(json.message);
+                showSuccessPopup(json.message || "Membership Registered Successfully!");
                 membershipForm.reset();
                 closeModal();
             } else {
                 showErrorPopup(json.message || "Something went wrong.");
             }
         } catch (err) {
-            showErrorPopup("Server error. Is server.js running?");
-            console.error(err);
+            console.error("Membership Error:", err);
+            showErrorPopup("Cannot reach server. Please try again.");
         }
  
         submitBtn.disabled    = false;
@@ -166,7 +169,7 @@ if (membershipForm) {
     });
 }
  
-// ── BOOKING FORM → POST to server ────────────────────────────
+// ── BOOKING FORM → Render Backend ────────────────────────────
 const bookingForm = document.getElementById("bookingForm");
 if (bookingForm) {
     bookingForm.addEventListener("submit", async function (e) {
@@ -186,7 +189,7 @@ if (bookingForm) {
         };
  
         try {
-            const res  = await fetch("/api/booking", {
+            const res  = await fetch(`${API}/api/booking`, {
                 method:  "POST",
                 headers: { "Content-Type": "application/json" },
                 body:    JSON.stringify(data)
@@ -194,14 +197,14 @@ if (bookingForm) {
             const json = await res.json();
  
             if (json.success) {
-                showSuccessPopup(json.message);
+                showSuccessPopup(json.message || "Booking Confirmed Successfully!");
                 bookingForm.reset();
             } else {
-                showErrorPopup(json.message || "Booking failed.");
+                showErrorPopup(json.message || "Booking failed. Try again.");
             }
         } catch (err) {
-            showErrorPopup("Server error. Is server.js running?");
-            console.error(err);
+            console.error("Booking Error:", err);
+            showErrorPopup("Cannot reach server. Please try again.");
         }
  
         submitBtn.disabled    = false;
@@ -242,10 +245,10 @@ window.calculateBMI = function () {
         advice   = "Please consult a doctor and consider our personal training sessions.";
     }
  
-    document.getElementById("bmiValue").innerText    = bmi;
-    document.getElementById("bmiCategory").innerText = category;
+    document.getElementById("bmiValue").innerText      = bmi;
+    document.getElementById("bmiCategory").innerText   = category;
     document.getElementById("bmiCategory").style.color = color;
-    document.getElementById("bmiAdvice").innerText   = advice;
+    document.getElementById("bmiAdvice").innerText     = advice;
     document.getElementById("bmiResult").style.display = "block";
 };
  
@@ -261,25 +264,25 @@ window.addEventListener("scroll", () => {
  
 // ── SET MIN DATE ──────────────────────────────────────────────
 window.addEventListener("load", () => {
-    const today = new Date().toISOString().split("T")[0];
-    const dateInput  = document.getElementById("date");
-    const startDate  = document.getElementById("startDate");
+    const today     = new Date().toISOString().split("T")[0];
+    const dateInput = document.getElementById("date");
+    const startDate = document.getElementById("startDate");
     if (dateInput) dateInput.setAttribute("min", today);
     if (startDate) startDate.setAttribute("min", today);
 });
  
-// ── REVIEWS: Load from server on page start ───────────────────
+// ── REVIEWS: Load from Render backend ────────────────────────
 async function loadReviews() {
     const feed = document.getElementById("liveFeed");
     if (!feed) return;
  
     try {
-        const res     = await fetch("/api/reviews");
+        const res     = await fetch(`${API}/api/reviews`);
         const reviews = await res.json();
  
         feed.innerHTML = "";
  
-        if (reviews.length === 0) {
+        if (!reviews.length) {
             feed.innerHTML = '<p style="color:#888;text-align:center;padding:20px;">No reviews yet. Be the first!</p>';
             return;
         }
@@ -306,7 +309,7 @@ async function loadReviews() {
     }
 }
  
-// ── REVIEWS: Submit new review → POST to server ───────────────
+// ── REVIEWS: Post new review → Render backend ─────────────────
 const reviewForm = document.getElementById("clientReviewForm");
 if (reviewForm) {
     reviewForm.addEventListener("submit", async function (e) {
@@ -326,7 +329,7 @@ if (reviewForm) {
         submitBtn.textContent = "Posting...";
  
         try {
-            const res  = await fetch("/api/review", {
+            const res  = await fetch(`${API}/api/review`, {
                 method:  "POST",
                 headers: { "Content-Type": "application/json" },
                 body:    JSON.stringify({ name, rating, msg })
@@ -334,16 +337,14 @@ if (reviewForm) {
             const json = await res.json();
  
             if (json.success) {
-                // Add to feed instantly
-                const feed    = document.getElementById("liveFeed");
-                const emptyP  = feed.querySelector("p");
+                const feed   = document.getElementById("liveFeed");
+                const emptyP = feed.querySelector("p");
                 if (emptyP) emptyP.remove();
  
                 const stars   = "★".repeat(rating) + "☆".repeat(5 - rating);
                 const initial = name.charAt(0).toUpperCase();
                 const card    = document.createElement("div");
                 card.className = "feed-card";
-                card.id        = json.review.id;
                 card.innerHTML = `
                     <div class="feed-header">
                         <div class="feed-avatar">${initial}</div>
@@ -361,8 +362,8 @@ if (reviewForm) {
                 showErrorPopup(json.message || "Failed to post review.");
             }
         } catch (err) {
-            showErrorPopup("Server error. Is server.js running?");
-            console.error(err);
+            console.error("Review Error:", err);
+            showErrorPopup("Cannot reach server. Please try again.");
         }
  
         submitBtn.disabled    = false;
@@ -370,6 +371,6 @@ if (reviewForm) {
     });
 }
  
-// Load reviews when page loads
+// Load reviews on page start
 loadReviews();
  
