@@ -1,12 +1,15 @@
-
+Script · JS
 Copy
 
-// ================= GLOBAL =================
+// ============================================================
+//  FITNESS CLUB - script.js  (works with server.js)
+// ============================================================
+ 
+// ── Global ────────────────────────────────────────────────────
 let selectedPlan = {};
  
-// ================= SUCCESS POPUP =================
+// ── SUCCESS POPUP ─────────────────────────────────────────────
 function showSuccessPopup(message) {
-    // Remove existing popup if any
     const existing = document.getElementById("successPopup");
     if (existing) existing.remove();
  
@@ -14,302 +17,359 @@ function showSuccessPopup(message) {
     popup.id = "successPopup";
     popup.innerHTML = `
         <div style="
-            position: fixed;
-            top: 30px;
-            left: 50%;
+            position: fixed; top: 30px; left: 50%;
             transform: translateX(-50%) translateY(-20px);
             background: linear-gradient(135deg, #1a7a4a, #22c55e);
-            color: #fff;
-            padding: 18px 36px;
-            border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(34,197,94,0.35), 0 2px 8px rgba(0,0,0,0.18);
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 16px;
-            font-weight: 600;
-            z-index: 99999;
-            opacity: 0;
+            color: #fff; padding: 18px 36px; border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(34,197,94,0.35);
+            display: flex; align-items: center; gap: 14px;
+            font-family: 'Segoe UI', sans-serif; font-size: 16px;
+            font-weight: 600; z-index: 99999; opacity: 0;
             transition: opacity 0.35s ease, transform 0.35s ease;
-            min-width: 280px;
-            max-width: 90vw;
+            min-width: 280px; max-width: 90vw;
         ">
-            <span style="font-size: 26px; line-height: 1;">✅</span>
+            <span style="font-size:26px">✅</span>
             <span>${message}</span>
-        </div>
-    `;
- 
+        </div>`;
     document.body.appendChild(popup);
  
-    // Animate in
-    requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-            const box = popup.firstElementChild;
-            box.style.opacity = "1";
-            box.style.transform = "translateX(-50%) translateY(0)";
-        });
-    });
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+        const box = popup.firstElementChild;
+        box.style.opacity = "1";
+        box.style.transform = "translateX(-50%) translateY(0)";
+    }));
  
-    // Animate out after 3s
     setTimeout(() => {
         const box = popup.firstElementChild;
+        if (!box) return;
         box.style.opacity = "0";
         box.style.transform = "translateX(-50%) translateY(-20px)";
         setTimeout(() => popup.remove(), 400);
     }, 3000);
 }
  
-// ================= NAVBAR MENU =================
+function showErrorPopup(message) {
+    const popup = document.createElement("div");
+    popup.innerHTML = `
+        <div style="
+            position: fixed; top: 30px; left: 50%;
+            transform: translateX(-50%) translateY(-20px);
+            background: linear-gradient(135deg, #7a1a1a, #ef4444);
+            color: #fff; padding: 18px 36px; border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(239,68,68,0.35);
+            display: flex; align-items: center; gap: 14px;
+            font-family: 'Segoe UI', sans-serif; font-size: 16px;
+            font-weight: 600; z-index: 99999; opacity: 0;
+            transition: opacity 0.35s ease, transform 0.35s ease;
+            min-width: 280px; max-width: 90vw;
+        ">
+            <span style="font-size:26px">❌</span>
+            <span>${message}</span>
+        </div>`;
+    document.body.appendChild(popup);
+ 
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+        const box = popup.firstElementChild;
+        box.style.opacity = "1";
+        box.style.transform = "translateX(-50%) translateY(0)";
+    }));
+ 
+    setTimeout(() => {
+        const box = popup.firstElementChild;
+        if (!box) return;
+        box.style.opacity = "0";
+        box.style.transform = "translateX(-50%) translateY(-20px)";
+        setTimeout(() => popup.remove(), 400);
+    }, 3000);
+}
+ 
+// ── NAVBAR MENU ───────────────────────────────────────────────
 const menuToggle = document.getElementById("menuToggle");
-const navLinks = document.getElementById("navLinks");
+const navLinks   = document.getElementById("navLinks");
  
 if (menuToggle && navLinks) {
     menuToggle.addEventListener("click", () => {
         navLinks.classList.toggle("active");
     });
- 
-    const links = navLinks.querySelectorAll("a");
-    links.forEach(link => {
-        link.addEventListener("click", () => {
-            navLinks.classList.remove("active");
-        });
+    navLinks.querySelectorAll("a").forEach(link => {
+        link.addEventListener("click", () => navLinks.classList.remove("active"));
     });
 }
  
-// ================= SMOOTH SCROLL =================
+// ── SMOOTH SCROLL ─────────────────────────────────────────────
 document.querySelectorAll('a[href^="#"]').forEach(link => {
     link.addEventListener("click", function (e) {
         e.preventDefault();
         const target = document.querySelector(this.getAttribute("href"));
-        if (target) {
-            target.scrollIntoView({ behavior: "smooth" });
-        }
+        if (target) target.scrollIntoView({ behavior: "smooth" });
     });
 });
  
-// ================= SELECT PLAN =================
+// ── SELECT MEMBERSHIP PLAN ────────────────────────────────────
 window.selectPlan = function (plan, price) {
     selectedPlan = { plan, price };
- 
-    document.getElementById("selectedPlan").innerText = plan;
+    document.getElementById("selectedPlan").innerText  = plan;
     document.getElementById("selectedPrice").innerText = price;
- 
     document.getElementById("membershipModal").style.display = "flex";
 };
  
-// ================= CLOSE MODAL =================
+// ── CLOSE MODAL ───────────────────────────────────────────────
 window.closeModal = function () {
     document.getElementById("membershipModal").style.display = "none";
 };
- 
-// ================= CLOSE ON OUTSIDE CLICK =================
 window.addEventListener("click", (e) => {
     const modal = document.getElementById("membershipModal");
-    if (e.target === modal) {
-        closeModal();
-    }
+    if (e.target === modal) closeModal();
 });
  
-// ================= SAVE MEMBERSHIP =================
-document.getElementById("membershipForm").addEventListener("submit", function (e) {
-    e.preventDefault();
+// ── MEMBERSHIP FORM → POST to server ─────────────────────────
+const membershipForm = document.getElementById("membershipForm");
+if (membershipForm) {
+    membershipForm.addEventListener("submit", async function (e) {
+        e.preventDefault();
  
-    let members = JSON.parse(localStorage.getItem("memberships")) || [];
+        const submitBtn = this.querySelector("button[type=submit]");
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Submitting...";
  
-    const newMember = {
-        id: Date.now(),
-        name: document.getElementById("memberName").value,
-        email: document.getElementById("memberEmail").value,
-        phone: document.getElementById("memberPhone").value,
-        startDate: document.getElementById("startDate").value,
-        plan: selectedPlan.plan || "Basic",
-        price: selectedPlan.price || 0,
-        status: "Pending"
-    };
+        const data = {
+            name:      document.getElementById("memberName").value,
+            email:     document.getElementById("memberEmail").value,
+            phone:     document.getElementById("memberPhone").value,
+            startDate: document.getElementById("startDate").value,
+            plan:      selectedPlan.plan  || "Basic",
+            price:     selectedPlan.price || 0
+        };
  
-    members.push(newMember);
-    localStorage.setItem("memberships", JSON.stringify(members));
+        try {
+            const res  = await fetch("/api/membership", {
+                method:  "POST",
+                headers: { "Content-Type": "application/json" },
+                body:    JSON.stringify(data)
+            });
+            const json = await res.json();
  
-    showSuccessPopup("Membership Registered Successfully!");
+            if (json.success) {
+                showSuccessPopup(json.message);
+                membershipForm.reset();
+                closeModal();
+            } else {
+                showErrorPopup(json.message || "Something went wrong.");
+            }
+        } catch (err) {
+            showErrorPopup("Server error. Is server.js running?");
+            console.error(err);
+        }
  
-    document.getElementById("membershipForm").reset();
-    closeModal();
-});
+        submitBtn.disabled    = false;
+        submitBtn.textContent = "SUBMIT";
+    });
+}
  
-// ================= SAVE BOOKING =================
-document.getElementById("bookingForm").addEventListener("submit", function (e) {
-    e.preventDefault();
+// ── BOOKING FORM → POST to server ────────────────────────────
+const bookingForm = document.getElementById("bookingForm");
+if (bookingForm) {
+    bookingForm.addEventListener("submit", async function (e) {
+        e.preventDefault();
  
-    let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+        const submitBtn = this.querySelector("button[type=submit]");
+        submitBtn.disabled    = true;
+        submitBtn.textContent = "Booking...";
  
-    const newBooking = {
-        id: Date.now(),
-        name: document.getElementById("name").value,
-        email: document.getElementById("email").value,
-        phone: document.getElementById("phone").value,
-        service: document.getElementById("service").value,
-        date: document.getElementById("date").value,
-        message: document.getElementById("message").value
-    };
+        const data = {
+            name:    document.getElementById("name").value,
+            email:   document.getElementById("email").value,
+            phone:   document.getElementById("phone").value,
+            service: document.getElementById("service").value,
+            date:    document.getElementById("date").value,
+            message: document.getElementById("message").value
+        };
  
-    bookings.push(newBooking);
-    localStorage.setItem("bookings", JSON.stringify(bookings));
+        try {
+            const res  = await fetch("/api/booking", {
+                method:  "POST",
+                headers: { "Content-Type": "application/json" },
+                body:    JSON.stringify(data)
+            });
+            const json = await res.json();
  
-    showSuccessPopup("Booking Confirmed Successfully!");
+            if (json.success) {
+                showSuccessPopup(json.message);
+                bookingForm.reset();
+            } else {
+                showErrorPopup(json.message || "Booking failed.");
+            }
+        } catch (err) {
+            showErrorPopup("Server error. Is server.js running?");
+            console.error(err);
+        }
  
-    document.getElementById("bookingForm").reset();
-});
+        submitBtn.disabled    = false;
+        submitBtn.textContent = "BOOK NOW";
+    });
+}
  
-// ================= BMI CALCULATOR =================
+// ── BMI CALCULATOR ────────────────────────────────────────────
 window.calculateBMI = function () {
-    const height = document.getElementById("height").value;
-    const weight = document.getElementById("weight").value;
+    const height = parseFloat(document.getElementById("height").value);
+    const weight = parseFloat(document.getElementById("weight").value);
  
-    if (!height || !weight) {
-        alert("Enter valid values");
+    if (!height || !weight || height <= 0 || weight <= 0) {
+        showErrorPopup("Please enter valid height and weight.");
         return;
     }
  
-    const h = height / 100;
+    const h   = height / 100;
     const bmi = (weight / (h * h)).toFixed(1);
  
-    let category = "";
-    let color = "";
+    let category, color, advice;
  
     if (bmi < 18.5) {
-        category = "Underweight";
-        color = "orange";
+        category = "Underweight 🥗";
+        color    = "orange";
+        advice   = "Consider increasing calorie intake with nutritious foods.";
     } else if (bmi < 25) {
-        category = "Normal";
-        color = "green";
+        category = "Normal Weight ✅";
+        color    = "#22c55e";
+        advice   = "Great job! Maintain your healthy lifestyle.";
     } else if (bmi < 30) {
-        category = "Overweight";
-        color = "orange";
+        category = "Overweight ⚠️";
+        color    = "orange";
+        advice   = "Regular cardio and a balanced diet can help.";
     } else {
-        category = "Obese";
-        color = "red";
+        category = "Obese 🔴";
+        color    = "red";
+        advice   = "Please consult a doctor and consider our personal training sessions.";
     }
  
-    document.getElementById("bmiValue").innerText = bmi;
+    document.getElementById("bmiValue").innerText    = bmi;
     document.getElementById("bmiCategory").innerText = category;
     document.getElementById("bmiCategory").style.color = color;
- 
+    document.getElementById("bmiAdvice").innerText   = advice;
     document.getElementById("bmiResult").style.display = "block";
 };
  
-// ================= NAVBAR SCROLL EFFECT =================
+// ── NAVBAR SCROLL EFFECT ──────────────────────────────────────
 window.addEventListener("scroll", () => {
     const navbar = document.querySelector(".navbar");
- 
     if (navbar) {
-        if (window.scrollY > 100) {
-            navbar.style.background = "rgba(0,0,0,0.95)";
-        } else {
-            navbar.style.background = "rgba(0,0,0,0.7)";
-        }
+        navbar.style.background = window.scrollY > 100
+            ? "rgba(0,0,0,0.95)"
+            : "rgba(0,0,0,0.7)";
     }
 });
  
-// ================= SET MIN DATE =================
+// ── SET MIN DATE ──────────────────────────────────────────────
 window.addEventListener("load", () => {
-    const dateInput = document.getElementById("date");
-    const startDate = document.getElementById("startDate");
- 
     const today = new Date().toISOString().split("T")[0];
- 
+    const dateInput  = document.getElementById("date");
+    const startDate  = document.getElementById("startDate");
     if (dateInput) dateInput.setAttribute("min", today);
     if (startDate) startDate.setAttribute("min", today);
 });
  
- 
-// ================= REVIEW SYSTEM =================
- 
-// Show all saved reviews on page load
-function displayReviewsOnMainPage() {
-    const feed = document.getElementById('liveFeed');
+// ── REVIEWS: Load from server on page start ───────────────────
+async function loadReviews() {
+    const feed = document.getElementById("liveFeed");
     if (!feed) return;
  
-    const saved = JSON.parse(localStorage.getItem('memberReviews') || '[]');
+    try {
+        const res     = await fetch("/api/reviews");
+        const reviews = await res.json();
  
-    feed.innerHTML = '';
+        feed.innerHTML = "";
  
-    if (saved.length === 0) {
-        feed.innerHTML = '<p style="color:#888;text-align:center;padding:20px;">No reviews yet. Be the first!</p>';
-        return;
+        if (reviews.length === 0) {
+            feed.innerHTML = '<p style="color:#888;text-align:center;padding:20px;">No reviews yet. Be the first!</p>';
+            return;
+        }
+ 
+        reviews.forEach(review => {
+            const stars   = "★".repeat(review.rating) + "☆".repeat(5 - review.rating);
+            const initial = review.name.charAt(0).toUpperCase();
+            const card    = document.createElement("div");
+            card.className = "feed-card";
+            card.id        = review.id;
+            card.innerHTML = `
+                <div class="feed-header">
+                    <div class="feed-avatar">${initial}</div>
+                    <div>
+                        <h4>${review.name}</h4>
+                        <div class="feed-stars">${stars}</div>
+                    </div>
+                </div>
+                <p>"${review.msg}"</p>`;
+            feed.appendChild(card);
+        });
+    } catch (err) {
+        console.error("Could not load reviews:", err);
     }
- 
-    // Show newest first
-    saved.slice().reverse().forEach(function(review) {
-        const stars   = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
-        const initial = review.name.charAt(0).toUpperCase();
-        const card    = document.createElement('div');
-        card.className = 'feed-card';
-        card.id        = review.id;
-        card.innerHTML =
-            '<div class="feed-header">' +
-                '<div class="feed-avatar">' + initial + '</div>' +
-                '<div>' +
-                    '<h4>' + review.name + '</h4>' +
-                    '<div class="feed-stars">' + stars + '</div>' +
-                '</div>' +
-            '</div>' +
-            '<p>"' + review.msg + '"</p>';
-        feed.appendChild(card);
-    });
 }
  
-// Submit a new review
-const reviewForm = document.getElementById('clientReviewForm');
- 
+// ── REVIEWS: Submit new review → POST to server ───────────────
+const reviewForm = document.getElementById("clientReviewForm");
 if (reviewForm) {
-    reviewForm.addEventListener('submit', function(e) {
+    reviewForm.addEventListener("submit", async function (e) {
         e.preventDefault();
  
-        const name   = document.getElementById('userName').value.trim();
-        const rating = parseInt(document.getElementById('userRating').value);
-        const msg    = document.getElementById('userMsg').value.trim();
+        const name   = document.getElementById("userName").value.trim();
+        const rating = parseInt(document.getElementById("userRating").value);
+        const msg    = document.getElementById("userMsg").value.trim();
  
-        if (!name || !msg) return;
+        if (!name || !msg) {
+            showErrorPopup("Please fill in your name and review.");
+            return;
+        }
  
-        const newReview = {
-            id:     'rev-' + Date.now(),
-            name:   name,
-            rating: rating,
-            msg:    msg
-        };
+        const submitBtn = this.querySelector("button[type=submit]");
+        submitBtn.disabled    = true;
+        submitBtn.textContent = "Posting...";
  
-        // Save to localStorage (dashboard reads this)
-        const allReviews = JSON.parse(localStorage.getItem('memberReviews') || '[]');
-        allReviews.push(newReview);
-        localStorage.setItem('memberReviews', JSON.stringify(allReviews));
+        try {
+            const res  = await fetch("/api/review", {
+                method:  "POST",
+                headers: { "Content-Type": "application/json" },
+                body:    JSON.stringify({ name, rating, msg })
+            });
+            const json = await res.json();
  
-        // Add to feed immediately without page reload
-        const feed   = document.getElementById('liveFeed');
-        const emptyP = feed.querySelector('p');
-        if (emptyP) emptyP.remove();
+            if (json.success) {
+                // Add to feed instantly
+                const feed    = document.getElementById("liveFeed");
+                const emptyP  = feed.querySelector("p");
+                if (emptyP) emptyP.remove();
  
-        const stars   = '★'.repeat(rating) + '☆'.repeat(5 - rating);
-        const initial = name.charAt(0).toUpperCase();
-        const card    = document.createElement('div');
-        card.className = 'feed-card';
-        card.id        = newReview.id;
-        card.innerHTML =
-            '<div class="feed-header">' +
-                '<div class="feed-avatar">' + initial + '</div>' +
-                '<div>' +
-                    '<h4>' + name + '</h4>' +
-                    '<div class="feed-stars">' + stars + '</div>' +
-                '</div>' +
-            '</div>' +
-            '<p>"' + msg + '"</p>';
-        feed.prepend(card);
+                const stars   = "★".repeat(rating) + "☆".repeat(5 - rating);
+                const initial = name.charAt(0).toUpperCase();
+                const card    = document.createElement("div");
+                card.className = "feed-card";
+                card.id        = json.review.id;
+                card.innerHTML = `
+                    <div class="feed-header">
+                        <div class="feed-avatar">${initial}</div>
+                        <div>
+                            <h4>${name}</h4>
+                            <div class="feed-stars">${stars}</div>
+                        </div>
+                    </div>
+                    <p>"${msg}"</p>`;
+                feed.prepend(card);
  
-        showSuccessPopup("Review Posted Successfully!");
-        reviewForm.reset();
+                showSuccessPopup("Review Posted Successfully!");
+                reviewForm.reset();
+            } else {
+                showErrorPopup(json.message || "Failed to post review.");
+            }
+        } catch (err) {
+            showErrorPopup("Server error. Is server.js running?");
+            console.error(err);
+        }
+ 
+        submitBtn.disabled    = false;
+        submitBtn.textContent = "Post Review";
     });
 }
  
-// Load reviews on page start
-displayReviewsOnMainPage();
+// Load reviews when page loads
+loadReviews();
  
